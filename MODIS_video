@@ -41,7 +41,7 @@ print(images)
 Map.addLayer(images)
 
 
-var polygon = ee.Geometry.Rectangle([-150, 55, 150, -55]);
+var polygon = ee.Geometry.Rectangle([-19.69, -35.46,53.44, 37.72]);
 //var polygon = ee.Geometry.Rectangle([-122.7286, 37.6325, -122.0241, 37.9592]);
 Export.video.toDrive({
   collection: images,
