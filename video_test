@@ -9,7 +9,8 @@ var v = ee.ImageCollection('LANDSAT/LC8_L1T_TOA')
   .filterBounds(point).filterDate(start, finish)
   .select(['B4', 'B3', 'B2'])
   .map(function(image) {
-    return image.multiply(512).uint8();//.visualize()
+    return image.multiply(512).uint8();
+  //.visualize()
   });
 
 Export.video.toDrive(v);
