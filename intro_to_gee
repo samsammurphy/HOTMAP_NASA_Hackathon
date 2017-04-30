@@ -15,5 +15,6 @@ var ic = ee.ImageCollection('LANDSAT/LC8_L1T_TOA')
 // 4) grab the first valid image in the collection after filtering
 var img = ee.Image(ic.first())
 
-Map.addLayer(img)
+Map.addLayer(geom)
+Map.addLayer(img,{bands:['B4','B3','B2'],min:0,max:0.3})
 Map.centerObject(img)
