@@ -270,9 +270,10 @@ HotMap.prototype.onNextButtonClick = function(){
   print(newDate);
   newDate = newDate.advance(1, 'day').getInfo();
   print(newDate.value);
-  var d = new Date(newDate.value);
-  var newd = String(d.getFullYear()) + "-" + String(d.getMonth()+1) + "-" + String(d.getDate() + 1);
-  this.dateBoxStart.setValue(newd, false);
+  var d = new ee.Date(newDate.value);
+  print(d)
+  //var newd = String(d.getFullYear()) + "-" + String(d.getMonth()+1) + "-" + String(d.getDate() + 1);
+  this.dateBoxStart.setValue(d.format('YYYY-MM-dd').getInfo(), false);
   var thisObject = this;
 }
 
