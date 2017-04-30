@@ -1,0 +1,385 @@
+// Test mapping function
+//
+// area
+// fileID, satID, timestamp
+
+
+// The Hawaiian Islands
+//var geom = ee.Geometry.Point(Map.getCenter().coordinates().get(0), Map.getCenter().coordinates().get(1))
+/*
+  Declaration of all variables to be used
+  which can be initialized and cleared
+*/
+var HotMap = function(){
+  this.name = "HotMap";
+
+  //UI components
+  this.dateBoxStart = null;
+  this.dateBoxEnd = null;
+  this.reRunAnalysis = null;
+  this.nextButton = null;
+  this.chkbx_IR = null;
+  this.chkbx_precipitation = null;
+  this.chkbx_rgb = null;
+  this.chkbx_hotmap = null;
+  this.chkbx_wind = null;
+  this.label_data_date = null;
+
+  //Object Variables
+  this.startDate = null;
+  this.endDate = null;
+
+  this.ic = null;
+  this.wind_data = null;
+  this.init();
+};
+
+
+
+HotMap.prototype.init = function(){
+  /*
+  Generates UI components as global variables
+  */
+  var thisObject = this;
+  // date textbox
+  this.dateBoxStart = ui.Textbox({
+     placeholder: 'Enter start date (YYYY-MM-DD)',
+     onChange: function(date){thisObject.startDateChanged(date)}
+   });
+
+   this.dateBoxEnd = ui.Textbox({
+     placeholder: 'Enter end date (YYYY-MM-DD)',
+     onChange: function(date){thisObject.endDateChanged(date)}
+   });
+
+   //Rerun for selection
+   this.reRunAnalysis = ui.Button({
+     label: 'Run Analysis',
+     onClick: function(target){thisObject.onReRunClick()}
+   });
+
+   this.nextButton = ui.Button({
+     label: 'Next...',
+     onClick: function(target){thisObject.onNextButtonClick();}
+   });
+
+  //Check boxes
+  this.chkbx_IR = ui.Checkbox("Infrared", true);
+  this.chkbx_precipitation =  ui.Checkbox("Precipitation", false);
+  this.chkbx_rgb =  ui.Checkbox("RGB", false);
+  this.chkbx_hotmap =  ui.Checkbox("Fires", true);
+  this.chkbx_wind =  ui.Checkbox("Wind", true);
+
+  //On map labels
+  this.label_data_date = ui.Panel({
+    widgets: [ui.Label('')],
+    style: {position: 'bottom-left',shown:false},
+  });
+  Map.add(this.label_data_date);
+   /*
+   End of global ui components
+   */
+}
+
+HotMap.prototype.show = function(){
+  this.setupSidePannel();
+  //this.onReRunClick();
+}
+
+/*
+  *********************** Handlers of UI call back functions ***********************
+  */
+HotMap.prototype.startDateChanged = function(date){
+  print(date)
+  this.startDate = ee.Date(date);
+}
+
+HotMap.prototype.endDateChanged = function(date){
+    print(date)
+    this.endDate = date;
+}
+
+HotMap.prototype.onReRunClick = function(){
+  this.hotnessAnalysis();
+  var thisObject = this;
+  this.dateBoxStart.setValue(null, false);
+  this.addPrecipitationLayer(this.startDate);
+
+}
+
+HotMap.prototype.hotnessAnalysis = function(){
+  var geom = Map.getCenter();
+  // Landsat 8 collection
+  var ic = ee.ImageCollection('LANDSAT/LC8_L1T_TOA')
+    .filterBounds(geom)
+    //.filterDate('2016-01-01','2016-01-5')
+    .sort('system:time-start')
+    .select(['B2','B3','B4','B5','B6','B7'],['blue','green','red','nir','swir1','swir2']);
+
+  if(this.startDate != null && this.startDate != ''){
+    ic = ic.filterDate(this.startDate, '3000-01-01')
+  }else{
+    ic = ic.sort('system:time-start')
+  }
+
+  // SINGLE IMAGE
+  var img = ee.Image(ic.first())
+  this.startDate = ee.Date(img.get("DATE_ACQUIRED"));
+  this.label_data_date.style().set({shown:true});
+  this.label_data_date.widgets().set(0, ui.Label("Data Date: " + this.startDate.format("yyyy-MM-dd").getInfo()));
+
+
+  //TODO: Get image date and set date of start date to image date
+
+
+  //TODO: check if selected and then add to layer
+  this.removeAllOldLayers();
+  if(this.chkbx_IR.getValue()){
+    this.renameLayer("infrared", "infrared2");
+    Map.addLayer(img.select(['swir2','swir1','nir']),{min:0,max:0.4},'infrared');
+  }else{
+    this.removeLayer('infrared');
+  }
+  if(this.chkbx_rgb.getValue()){
+    this.renameLayer("rgb", "rgb2");
+    Map.addLayer(img.select(['red','green','blue']),{min:0,max:0.4},'rgb');
+  }else{
+    this.removeLayer('rgb');
+  }
+
+  var hot = this.runHotMapAnalysis(img)
+  //TODO: check if selected
+  if(this.chkbx_hotmap.getValue()){
+    this.renameLayer("hot_vectors", "hot_vectors2");
+    Map.addLayer(hot,{color:'FF0000'},'hot_vectors');
+  }else{
+    this.removeLayer('hot_vectors');
+  }
+  this.addWindLayer(this.startDate, hot);
+}
+/*
+  *********************** END ***********************
+  */
+
+
+
+
+
+// Generates the side pannel
+HotMap.prototype.setupSidePannel = function(){
+  // PANELS
+  // ********************************************************************************************
+  // main panel
+  var panel = ui.Panel({style: {width: '400px'}})
+  panel.widgets().set(0,ui.Label('Controls',{fontWeight:'bold'}))
+  panel.widgets().set(1,this.dateBoxStart)
+  //panel.widgets().set(2,this.dateBoxEnd)
+  panel.widgets().set(2, this.reRunAnalysis);
+  panel.widgets().set(3, this.nextButton);
+  panel.widgets().set(4, this.chkbx_IR);
+  panel.widgets().set(5, this.chkbx_precipitation);
+  panel.widgets().set(6, this.chkbx_rgb);
+  panel.widgets().set(7, this.chkbx_hotmap);
+  panel.widgets().set(8, this.chkbx_wind);
+
+  ui.root.add(panel);
+
+}
+
+/**
+  Fancy pants function to do the actual SCIENCE!!!
+*/
+// HOTMAP detection (returns hot pixel clusters, i.e. a feature collection per image)
+HotMap.prototype.runHotMapAnalysis = function(img) {
+
+  // wavebands
+  var n  = img.select('nir')
+  var s1 = img.select('swir1')
+  var s2 = img.select('swir2')
+
+  // alpha detection
+  var a1 = s2.divide(s1).gt(1.4)
+  var a2 = s2.divide(n).gt(1.4)
+  var a3 = s2.gt(0.15)
+  var alpha = a1.and(a2).and(a3).rename('alpha')
+
+  // beta detection
+  var b1 = s1.divide(n).gt(2)
+  var b2 = s1.gt(0.5)
+  var beta = b1.and(b2).rename('beta')
+
+  // potential hot pixels
+  var potentialHot = alpha.or(beta)
+  var hotPixels = potentialHot.updateMask(potentialHot)
+
+  // hot pixel clusters (count alpha pixels)
+  var hotClusters = hotPixels.addBands(alpha).reduceToVectors({
+    eightConnected:true,
+    maxPixels:2e8,//might seem like a lot but MOST pixels are masked
+    reducer:ee.Reducer.count()
+  })
+
+  // hot pixel clusters must contain alpha pixels
+  var validHotClusters = hotClusters.filter(ee.Filter.gt('count', 0));
+
+  // Image properties
+  var fileID = img.get('system:index')
+  var satID = ee.String(fileID).slice(0,3)
+  var timestamp = img.get('system:time_start')
+
+  // Assign properties
+  var clusters = validHotClusters.map(function(feature) {
+    var clusterGeom = feature.geometry()
+    var clusterArea = feature.geometry().area(1) // i.e. to within 1 m2
+    var cluster = ee.Feature(clusterGeom,{
+      fileID:fileID,
+      satID:satID,
+      timestamp:timestamp,
+      area:clusterArea
+    })
+    return cluster
+  })
+
+  return clusters
+}
+
+/**
+  Grabs precipitation data and plots it on map
+**/
+// function addPrecipitationLayer(dateStart, dateEnd)
+// Parameters:
+// string dateStart, indicating start of data range (e.g. '2017-03-01')
+// string dateEnd, indicating end of datarange (e.g. '2017-03-27')
+// Return values:
+// like any good function, this function returns void and just has tons of side effects
+HotMap.prototype.addPrecipitationLayer = function(s) {
+  this.removeLayer('precipitation');
+    if(this.chkbx_precipitation.getValue()){
+      this.ic = ee.ImageCollection('UCSB-CHG/CHIRPS/PENTAD')
+      //.filterDate('2017-03-01', '2017-03-27');
+      .filterDate(ee.Date(s),ee.Date(s).advance(10, 'day'));
+      var meanPrecip = this.ic.reduce(ee.Reducer.mean());
+      Map.addLayer(meanPrecip, {min:0,max:10, palette: ['FF0000', '0000FF']}, 'precipitation', true, 0.40);
+    }
+  }
+
+
+HotMap.prototype.addWindLayer = function(s, hot) {
+  if(!s){
+    s = '2016-07-31';
+  }
+  
+  if(this.chkbx_wind.getValue()){
+  
+    var ic = ee.ImageCollection('NASA/NLDAS/FORA0125_H002')
+    //.filterDate('2017-03-01', '2017-03-27');
+    .select(['wind_u', 'wind_v'])
+    .filterDate(ee.Date(s), ee.Date(s).advance(10, 'day'));
+  
+    this.wind_data = ee.Image(ic.first());
+  
+    var wind = this.wind_data
+    var wind_vectors = hot.map(function(feature) {
+    
+    
+      var scale = ee.Number(Map.getScale()).multiply(1e-4)
+    
+      var point0 = ee.Geometry.Polygon(ee.List(feature.geometry().coordinates().get(0))).centroid();
+      var wind_vector = wind.reduceRegion(ee.Reducer.mean(),point0)
+      var wind_u = ee.Number(wind_vector.get('wind_u'))
+      var wind_v = ee.Number(wind_vector.get('wind_v'))
+      var du = wind_u.multiply(scale).add(point0.coordinates().get(0))
+      var dv = wind_v.multiply(scale).add(point0.coordinates().get(1))
+      var point1 = ee.Geometry.Point(du,dv)
+      var wind_line = ee.Geometry.LineString([point0,point1])
+    
+      return ee.Feature(wind_line,{'wind_u':wind_u,'wind_v':wind_v})
+  
+    });
+  
+  
+  
+    var wind_points = hot.map(function(feature) {
+    
+      var scale = ee.Number(Map.getScale()).multiply(1e-4)
+    
+      var point0 = ee.Geometry.Polygon(ee.List(feature.geometry().coordinates().get(0))).centroid()
+      var wind_vector = wind.reduceRegion(ee.Reducer.mean(),point0)
+      var wind_u = ee.Number(wind_vector.get('wind_u'))
+      var wind_v = ee.Number(wind_vector.get('wind_v'))
+      var du = wind_u.multiply(scale).add(point0.coordinates().get(0))
+      var dv = wind_v.multiply(scale).add(point0.coordinates().get(1))
+      var point1 = ee.Geometry.Point(du,dv)
+      var wind_line = ee.Geometry.LineString([point0,point1])
+    
+      return ee.Feature(point1,{'wind_u':wind_u,'wind_v':wind_v})
+  
+    });
+  
+    Map.addLayer(wind_vectors, {name: 'wind_vectors'});
+    Map.addLayer(wind_points, {name: 'wind_points', color: 'blue'});
+  }else{
+    this.removeLayer('wind_vectors');
+    this.removeLayer('wind_points');
+  }
+}
+
+
+
+//Removes a layer in the map by itterating through values
+HotMap.prototype.removeLayer = function(name){
+      var found = false;
+    for(var i = 0; i <  Map.layers().length(); i++){
+      var layer = Map.layers().get(i);
+      if(layer.getName() == name){
+        Map.remove(layer);
+        found = true;
+      }
+    }
+    return found;
+}
+
+//Renames a layer in the stack
+HotMap.prototype.renameLayer = function(oldName, newName){
+  var found = false;
+  for(var i = 0; i <  Map.layers().length(); i++){
+    var layer = Map.layers().get(i);
+    if(layer.getName() == oldName){
+      layer.setName(newName);
+      found = true;
+    }
+  }
+  return found;
+}
+
+HotMap.prototype.removeAllOldLayers = function(){
+  var found = false;
+  for(var i = 0; i <  Map.layers().length(); i++){
+    var layer = Map.layers().get(i);
+
+    if(layer.getName().match("2") != null){
+      Map.remove(layer);
+      found = true;
+    }
+  }
+  return found;
+}
+
+
+
+// When the next button is clicked, add a day and re run analysis
+HotMap.prototype.onNextButtonClick = function(){
+  this.startDate = this.startDate.advance(1, 'day');
+  print(this.startDate);
+  this.onReRunClick();
+}
+
+
+// declare the hot object to be used
+var hot = new HotMap();
+hot.show();
+
+
+Map.onChangeCenter(function(){
+  hot.removeAllOldLayers();
+});
