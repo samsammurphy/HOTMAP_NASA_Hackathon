@@ -1,3 +1,10 @@
 var volcanoes = ee.FeatureCollection('ft:1By_TxmjpCjLippFR1REdyA7ULGEAoQPw-EjubYAk')
 
-print(volcanoes.first())
+
+
+
+// function getFC(feature) {
+  
+  
+  
+// }
