@@ -14,11 +14,10 @@ Map.addLayer(binary,{color:'FF0000'})
 Map.centerObject(binary)
 
 var imgArr = [];
-var month = 1;
 var year = 2001;
 while (year < 2017) {
-  while (month < 13) { 
-     print(month)
+  var month = 1;
+  while (month < 13) {
     var start = ee.Date(year + '-' + month + '-01');
     month++;
     var end;
@@ -34,7 +33,6 @@ while (year < 2017) {
     var binary = sum.divide(sum).select('T21_sum').rename('binary')
     imgArr.push(binary)
   }
-  print(year)
   year++
 }
 var images = ee.ImageCollection(imgArr)
