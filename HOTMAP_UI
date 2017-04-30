@@ -86,6 +86,9 @@ HotMap.prototype.onReRunClick = function(){
 
   // SINGLE IMAGE
   var img = ee.Image(ic.first())
+  this.removeLayer('infrared');
+  this.removeLayer('hot_vectors');
+  
   Map.addLayer(img.select(['swir1','swir2','nir']),{min:0,max:0.4},'infrared')
   var hot = this.runHotMapAnalysis(img)
   Map.addLayer(hot,{color:'FF0000'},'hot_vectors')
