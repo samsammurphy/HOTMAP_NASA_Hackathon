@@ -12,4 +12,4 @@ var v = ee.ImageCollection('LANDSAT/LC8_L1T_TOA')
     return image.multiply(512).uint8();//.visualize()
   });
 
-Export.video.toCloudStorage(v);
+Export.video.toDrive(v);
