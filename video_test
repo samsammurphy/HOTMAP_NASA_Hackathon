@@ -1,0 +1,4 @@
+var ic = ee.ImageCollection('UCSB-CHG/CHIRPS/PENTAD')
+
+var v = ic.filterBounds('-122', '37')
+Export.video.toCloudStorage(v)
