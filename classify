@@ -32,9 +32,10 @@
 
 
 var hot = ee.Geometry.Point(-155.3824, 19.5339)
-var volcanic_area = ee.Geometry.Point(hot).buffer(1000)
+var volcanic_area = ee.Geometry.Point(-155.3714, 19.5287).buffer(10000)
 
 Map.addLayer(volcanic_area)
 Map.addLayer(hot,{color:'red'})
+
 
 
