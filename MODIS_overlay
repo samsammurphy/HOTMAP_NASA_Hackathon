@@ -63,6 +63,10 @@ function HOTMAP(img) {
 }
 
 
+
+
+
+
 var img = ee.Image(ic.first())
 Map.addLayer(img.select(['swir2','swir1','nir']),{min:0,max:0.4},'infrared')
 
@@ -70,3 +74,52 @@ var hot = HOTMAP(img)
 Map.addLayer(hot,{color:'red'},'hot_vectors')
 
 Map.centerObject(Monterey_geom,10)
+
+
+
+
+// Landsat geom, date and projection
+var LandsatImg = img.select(['B1']);
+var LandsatGeom = LandsatImg.geometry();
+var LandsatDate = ee.Date(LandsatImg.get('system:time_start'));
+var crs = LandsatImg.projection().crs()
+//var scale = LandsatImg.projection().nominalScale()
+
+// MODIS fire collection
+var FIRMS = ee.ImageCollection('FIRMS');
+//var crs = ee.Image(FIRMS.first()).projection().crs()
+var scale = ee.Image(FIRMS.first()).projection().nominalScale()
+
+// MODIS fire alerts within 24 hours of Landsat image acquisition
+var startDate = LandsatDate.advance(-12,'hour');
+var stopDate  = LandsatDate.advance(+12,'hour');
+var MODISalerts = FIRMS.select(['T21']).filterDate(startDate,stopDate)
+
+// Reduce MODIS alerts to single binary image
+var MODIScount = ee.Image(MODISalerts.count())
+var MODISbinary = MODIScount.eq(MODIScount).rename('MODIS_binary_alert')
+
+// Reproject alerts
+var MODISreproject = MODISbinary.reproject({crs:crs,scale:scale})
+
+// MODIS fire vectors
+var MODISvectors = MODISreproject.reduceToVectors({
+  geometry: LandsatGeom,
+  eightConnected:true,
+  labelProperty:'modis_fire',
+  maxPixels:2e8,
+  crs:crs,
+  scale:scale
+});
+
+// MODIS display
+var vectorDisplay = ee.Image(0).updateMask(0)
+  .clip(LandsatGeom)
+  .paint(MODISvectors, '000000', 3);
+  
+Map.addLayer(MODISreproject, {palette: 'gray'})
+Map.addLayer(vectorDisplay, {palette: 'FF0000'}, 'MODIS fire alerts');
+Map.setCenter(-121.7093, 36.3538,10)
+
+
+
