@@ -37,12 +37,12 @@ HotMap.prototype.init = function(){
   // date textbox
   this.dateBoxStart = ui.Textbox({
      placeholder: 'Enter start date (YYYY-MM-DD)',
-     onChange: function(){thisObject.startDateChanged()}
+     onChange: function(date){thisObject.startDateChanged(date)}
    });
 
    this.dateBoxEnd = ui.Textbox({
      placeholder: 'Enter end date (YYYY-MM-DD)',
-     onChange: function(){thisObject.endDateChanged()}
+     onChange: function(date){thisObject.endDateChanged(date)}
    });
 
    //Rerun for selection
@@ -94,14 +94,27 @@ HotMap.prototype.hotnessAnalysis = function(){
     .sort('system:time-start')
     .select(['B2','B3','B4','B5','B6','B7'],['blue','green','red','nir','swir1','swir2']);
 
+  print(this.startDate)
   if(this.startDate != null && this.startDate != ''){
-    ic = ic.filterDate(this.startDate)
+    var d = ee.Date.parse("yyyy-MM-dd", this.startDate)
+    ic = ic.filterDate(this.startDate, '3000-01-01')
   }else{
     ic = ic.sort('system:time-start')
   }
 
   // SINGLE IMAGE
   var img = ee.Image(ic.first())
+  img.getInfo()
+  var s = ee.String(img.get("DATE_ACQUIRED"));
+  var thisObject = this;
+  s.evaluate(function(success, failure){
+    // print(s);
+    // print("hey Ho")
+    thisObject.dateBoxStart.setValue(s, false);
+    thisObject.startDate = s;
+
+  })
+  print(this.startDate);
 
   //TODO: Get image date and set date of start date to image date
 
@@ -116,6 +129,7 @@ HotMap.prototype.hotnessAnalysis = function(){
   var hot = this.runHotMapAnalysis(img)
   //TODO: check if selected
   Map.addLayer(hot,{color:'FF0000'},'hot_vectors')
+
 
 }
 /*
