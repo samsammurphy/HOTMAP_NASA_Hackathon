@@ -17,7 +17,7 @@ var HotMap = function(){
   this.dateBoxStart = null;
   this.dateBoxEnd = null;
   this.reRunAnalysis = null;
-  this.addPrecipitation = null;
+  this.nextButton = null;
   this.chkbx_IR = null;
   this.chkbx_precipitation = null;
   this.chkbx_rgb = null;
@@ -56,9 +56,9 @@ HotMap.prototype.init = function(){
      onClick: function(target){thisObject.onReRunClick()}
    });
 
-   this.addPrecipitation = ui.Button({
-     label: 'Precipitation',
-     onClick: function(target){thisObject.addPrecipitationLayer(thisObject.startDate, thisObject.endDate)}
+   this.nextButton = ui.Button({
+     label: 'Next...',
+     onClick: function(target){thisObject.onNextButtonClick();}
    });
 
   //Check boxes
@@ -165,7 +165,7 @@ HotMap.prototype.setupSidePannel = function(){
   panel.widgets().set(1,this.dateBoxStart)
   //panel.widgets().set(2,this.dateBoxEnd)
   panel.widgets().set(2, this.reRunAnalysis);
-  panel.widgets().set(3, this.addPrecipitation);
+  panel.widgets().set(3, this.nextButton);
   panel.widgets().set(4, this.chkbx_IR);
   panel.widgets().set(5, this.chkbx_precipitation);
   panel.widgets().set(6, this.chkbx_rgb);
@@ -271,8 +271,25 @@ HotMap.prototype.removeLayer = function(name){
     return found;
 }
 
+// When the next button is clicked, add a day and re run analysis
+HotMap.prototype.onNextButtonClick = function(){
+  var newDate = ee.Date(this.startDate);
+  print("old date, new date");
+  print(newDate);
+  newDate = newDate.advance(1, 'day');
+  var thisObject = this;
+  this.dateBoxStart.setValue(newDate.serialize(), false);
+  newDate.evaluate(function(success, failure){
+    thisObject.dateBoxStart.setValue(success, false);
+    thisObject.startDate = success;
+    thisObject.hotnessAnalysis();
+  })
+
+  
+}
 
 
 // declare the hot object to be used
 var hot = new HotMap();
 hot.show();
+
