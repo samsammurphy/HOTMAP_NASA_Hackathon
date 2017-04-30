@@ -17,7 +17,6 @@ var HotMap = function(){
   this.dateBoxStart = null;
   this.dateBoxEnd = null;
   this.reRunAnalysis = null;
-  this.addPrecipitation = false;
 
   //Object Variables
   this.startDate = null;
@@ -189,10 +188,14 @@ HotMap.prototype.addPrecipitationLayer = function(s, e) {
     //.filterDate('2017-03-01', '2017-03-27');
     .filterDate(s, e);
     var meanPrecip = this.ic.reduce(ee.Reducer.mean());
-    
-    if (!this.addPrecipitation) {
-      Map.addLayer(meanPrecip, {min:0,max:10, palette: ['FF0000', '0000FF']}, 'precipitation', true, 0.40);
-    } 
+    for(f in Map.layers().getJsArray()){
+      if(f.name == 'precipitation'){
+        Map.remove(f);
+      }
+      print(f.name)
+    }
+    print(Map.layers().getJsArray())
+    Map.addLayer(meanPrecip, {min:0,max:10, palette: ['FF0000', '0000FF']}, 'precipitation', true, 0.40);
 }
 
 
