@@ -5,9 +5,9 @@ function addWindLayer(s, e) {
   if (!e) {
     e = '2014-03-27';
   }
-  var ic = ee.ImageCollection('NASA/GLDAS/V001/NOAH/G025/T3H')
+  var ic = ee.ImageCollection('NASA/NLDAS/FORA0125_H002')
   //.filterDate('2017-03-01', '2017-03-27');
-  .select(['Windsfc'])
+  .select(['wind_u', 'wind_v'])
   .filterDate(s, e);
   
   var layerWind = Map.addLayer(ee.Image(ic.first()), {min:0,max:10, /*palette: ['FF0000', '0000FF']*/}, 'wind', true, 0.40);
