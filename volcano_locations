@@ -9,5 +9,5 @@ var v = volcanoes.first()
 
 //var point = ee.Geometry.Point(v.get('geometry'))
 
-var point = ee.String(v.get('geometry')).getInfo()
+var point = v.get('geometry').float()
 print(point)
