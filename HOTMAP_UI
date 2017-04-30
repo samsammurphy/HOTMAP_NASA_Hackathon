@@ -17,7 +17,7 @@ var HotMap = function(){
   this.dateBoxStart = null;
   this.dateBoxEnd = null;
   this.reRunAnalysis = null;
-  this.addPrecipitation = null;
+  this.addPrecipitation = false;
 
   //Object Variables
   this.startDate = null;
