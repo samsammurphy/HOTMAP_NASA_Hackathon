@@ -50,7 +50,7 @@ HotMap.prototype.init = function(){
    });
 
    this.addPrecipitation = ui.Button({
-     label: 'Add Precipitation',
+     label: 'Precipitation',
      onClick: function(target){thisObject.addPrecipitationLayer(thisObject.startDate, thisObject.endDate)}
    });
    /*
@@ -188,14 +188,23 @@ HotMap.prototype.addPrecipitationLayer = function(s, e) {
     //.filterDate('2017-03-01', '2017-03-27');
     .filterDate(s, e);
     var meanPrecip = this.ic.reduce(ee.Reducer.mean());
-    for(f in Map.layers().getJsArray()){
-      if(f.name == 'precipitation'){
-        Map.remove(f);
-      }
-      print(f.name)
+    var isPrecipitationOn = this.removeLayer('precipitation');
+    if(!isPrecipitationOn){
+      Map.addLayer(meanPrecip, {min:0,max:10, palette: ['FF0000', '0000FF']}, 'precipitation', true, 0.40);
     }
-    print(Map.layers().getJsArray())
-    Map.addLayer(meanPrecip, {min:0,max:10, palette: ['FF0000', '0000FF']}, 'precipitation', true, 0.40);
+}
+
+//Removes a layer in the map by itterating through values
+HotMap.prototype.removeLayer = function(name){
+      var found = false;
+    for(var i = 0; i <  Map.layers().length(); i++){
+      var layer = Map.layers().get(i);
+      if(layer.getName() == name){
+        Map.remove(layer);
+        found = true;
+      }
+    }
+    return found;
 }
 
 
