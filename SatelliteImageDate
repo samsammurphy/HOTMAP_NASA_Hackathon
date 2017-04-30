@@ -83,11 +83,12 @@ HotMap.prototype.onReRunClick = function(){
   var ic = ee.ImageCollection('LANDSAT/LC8_L1T_TOA')
     .filterBounds(geom)
     //.filterDate('2016-01-01','2016-01-5')
-    .sort('system:time-start')
     .select(['B2','B3','B4','B5','B6','B7'],['blue','green','red','nir','swir1','swir2']);
 
   if(this.startDate != null && this.startDate != ''){
     ic = ic.filterDate(this.startDate)
+  }else{
+    ic = ic.sort('system:time-start')
   }
 
   // SINGLE IMAGE
