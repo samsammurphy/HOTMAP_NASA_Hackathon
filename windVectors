@@ -5,8 +5,9 @@ function addWindLayer(s, e) {
   if (!e) {
     e = '2017-03-27';
   }
-  var ic = ee.ImageCollection('NOAA/NWS/RTMA')
+  var ic = ee.ImageCollection('NASA/GLDAS/V020/NOAH/G025/T3H')
   //.filterDate('2017-03-01', '2017-03-27');
+  .select(['windsfc'])
   .filterDate(s, e);
   var meanWind = ic.reduce(ee.Reducer.mean());
   
