@@ -1,17 +1,13 @@
-var s = ee.Date('2000-01-01')
-var f = ee.Date('2002-10-01')
-
-var FIRMS = ee.ImageCollection('FIRMS')
-  .filterDate(s,f)
-
-var img = ee.Image((FIRMS.first()))
-
-var sum = FIRMS.reduce(ee.Reducer.sum())
-var binary = sum.divide(sum).select('T21_sum').rename('binary')
-
-print(binary)
-Map.addLayer(binary,{color:'FF0000'})
-Map.centerObject(binary)
+//var s = ee.Date('2000-01-01')
+//var f = ee.Date('2002-10-01')
+//var FIRMS = ee.ImageCollection('FIRMS')
+//  .filterDate(s,f)
+//var img = ee.Image((FIRMS.first()))
+//var sum = FIRMS.reduce(ee.Reducer.sum())
+//var binary = sum.divide(sum).select('T21_sum').rename('binary')
+//print(binary)
+//Map.addLayer(binary,{color:'FF0000'})
+//Map.centerObject(binary)
 
 var imgArr = [];
 var year = 2001;
@@ -19,7 +15,6 @@ while (year < 2017) {
   var month = 1;
   while (month < 13) {
     var start = ee.Date(year + '-' + month + '-01');
-    print(start)
     month++;
     var end;
     if(month == 13) {
@@ -30,17 +25,20 @@ while (year < 2017) {
     } else {
       end = ee.Date(year + '-' + month + '-01');
     }
-    print(end)
     var FIRMS = ee.ImageCollection('FIRMS')
       .filterDate(start, end)
     var sum = FIRMS.reduce(ee.Reducer.sum())
     var binary = sum.divide(sum).select('T21_sum').rename('binary')
     imgArr.push(binary)
   }
+  month = 1
   year++
 }
 var images = ee.ImageCollection(imgArr)
 print(images)
+
+
+
 
 // var images = ee.ImageCollection(imageCollection)
 //   .filterDate(start, finish)
