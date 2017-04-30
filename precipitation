@@ -2,9 +2,10 @@
 var imageCollection = ee.ImageCollection("NASA/GPM_L3/IMERG");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 var ic = ee.ImageCollection('NASA/GPM_L3/IMERG')
-.select(['probabilityLiquidPrecipitation']).first()
+.select(['precipitationCal'])
+.filterDate
 
-  //.filterDate('2016-01-01','2016-01-5')
+//print(ic.first())
   
   
   
@@ -12,5 +13,6 @@ var ic = ee.ImageCollection('NASA/GPM_L3/IMERG')
 //  .sort('system:time-start')
   ;
 var geom = Map.getCenter();
-var img = ee.Image(ic);
-Map.addLayer(img, {min: 0, max:100});
+var img = ee.Image(ic.first());
+Map.addLayer(img, {min: 0, max:2});
+print(img)
