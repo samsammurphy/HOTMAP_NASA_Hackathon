@@ -1,4 +1,17 @@
+var geom = ee.Geometry.Point(-155.3082, 19.2839)
+var startDate = ee.Date('2016-01-01')
+var endDate = ee.Date('2016-01-5')
+
+// SURFACE REFLECTANCE
+var ic = ee.ImageCollection('LANDSAT/LC8_SR')
+  .filterBounds(geom)
+  .filterDate(startDate,endDate)
+
+var img = ee.Image(ic.first()).divide(1000)
 
 
+Map.addLayer(img,{bands:['B4','B3','B2'],min:0,max:0.2},'image')
+Map.addLayer(geom,{color:'red'},'geom')
+Map.centerObject(img)
 
-LANDSAT/LC8_SR
+
