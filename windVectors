@@ -11,13 +11,13 @@ function addWindLayer(s, e) {
   .filterDate(s, e);
   
   var wind = ee.Image(ic.first())
-  
-  var layer = Map.addLayer(wind, {min:0,max:10, /*palette: ['FF0000', '0000FF']*/}, 'wind', true, 0.40);
 
   return wind
 }
 
 var wind = addWindLayer()
+var layer = Map.addLayer(wind, {min:0,max:10, /*palette: ['FF0000', '0000FF']*/}, 'wind', true, 0.40);
+
 
 // fire features
 var fire1 = ee.Geometry.Point(-116.19, 38.75)
@@ -50,6 +50,8 @@ var wind_vectors = fires.map(get_wind_vectors)
 
 print(wind_vectors)
 
+var vector = ee.Feature(wind_vectors.first())
 
+print(vector)
 
 
