@@ -1,4 +1,11 @@
+// Test mapping function
+//
+// area
+// fileID, satID, timestamp
 
+
+// The Hawaiian Islands
+//var geom = ee.Geometry.Point(Map.getCenter().coordinates().get(0), Map.getCenter().coordinates().get(1))
 /*
   Declaration of all variables to be used
   which can be initialized and cleared
@@ -76,7 +83,7 @@ HotMap.prototype.show = function(){
   */
 HotMap.prototype.startDateChanged = function(date){
   print(date)
-  this.startDate = date;
+  this.startDate = ee.Date(date);
 }
 
 HotMap.prototype.endDateChanged = function(date){
@@ -87,15 +94,8 @@ HotMap.prototype.endDateChanged = function(date){
 HotMap.prototype.onReRunClick = function(){
   this.hotnessAnalysis();
   var thisObject = this;
-  //We must wait for the async call back of the value of the image data
-  this.startDate.evaluate(function(success, failure){
-    thisObject.dateBoxStart.setValue(success, false);
-    thisObject.startDate = success;
-    //Get data for precipitation
-    thisObject.addPrecipitationLayer(thisObject.startDate);
-    //Get all other data (wind, ir, etc)
-
-  })
+  this.dateBoxStart.setValue(null, false);
+  this.addPrecipitationLayer(this.startDate);
 
 }
 
@@ -109,7 +109,6 @@ HotMap.prototype.hotnessAnalysis = function(){
     .select(['B2','B3','B4','B5','B6','B7'],['blue','green','red','nir','swir1','swir2']);
 
   if(this.startDate != null && this.startDate != ''){
-    var d = ee.Date.parse("yyyy-MM-dd", this.startDate)
     ic = ic.filterDate(this.startDate, '3000-01-01')
   }else{
     ic = ic.sort('system:time-start')
@@ -117,7 +116,7 @@ HotMap.prototype.hotnessAnalysis = function(){
 
   // SINGLE IMAGE
   var img = ee.Image(ic.first())
-  this.startDate = ee.String(img.get("DATE_ACQUIRED"));
+  this.startDate = ee.Date(img.get("DATE_ACQUIRED"));
 
   //TODO: Get image date and set date of start date to image date
 
@@ -235,11 +234,7 @@ HotMap.prototype.runHotMapAnalysis = function(img) {
 // string dateEnd, indicating end of datarange (e.g. '2017-03-27')
 // Return values:
 // like any good function, this function returns void and just has tons of side effects
-HotMap.prototype.addPrecipitationLayer = function(s, e) {
-    if(s == null){
-      s = '2017-03-01';
-      e = '2017-03-27';
-    }
+HotMap.prototype.addPrecipitationLayer = function(s) {
     this.ic = ee.ImageCollection('UCSB-CHG/CHIRPS/PENTAD')
     //.filterDate('2017-03-01', '2017-03-27');
     .filterDate(ee.Date(s),ee.Date(s).advance(10, 'day'));
@@ -248,7 +243,6 @@ HotMap.prototype.addPrecipitationLayer = function(s, e) {
     if(this.chkbx_precipitation.getValue()){
       Map.addLayer(meanPrecip, {min:0,max:10, palette: ['FF0000', '0000FF']}, 'precipitation', true, 0.40);
     }
-    //TODO: remove precipitation layer by default and check if selected
   }
 
 //Removes a layer in the map by itterating through values
@@ -266,19 +260,12 @@ HotMap.prototype.removeLayer = function(name){
 
 // When the next button is clicked, add a day and re run analysis
 HotMap.prototype.onNextButtonClick = function(){
-  var newDate = ee.Date(this.startDate);
-  print("old date, new date");
-  print(newDate);
-  newDate = newDate.advance(1, 'day').getInfo();
-  print(newDate.value);
-  var d = new Date(newDate.value);
-  var newd = String(d.getFullYear()) + "-" + String(d.getMonth()+1) + "-" + String(d.getDate() + 1);
-  this.dateBoxStart.setValue(newd, false);
-  var thisObject = this;
+  this.startDate = this.startDate.advance(1, 'day');
+  print(this.startDate);
+  this.onReRunClick();
 }
 
 
 // declare the hot object to be used
 var hot = new HotMap();
 hot.show();
-
