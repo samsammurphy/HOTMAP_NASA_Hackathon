@@ -27,4 +27,5 @@ HotMap.prototype.addPrecipitationLayer = function(s, e) {
 
 HotMap.prototype.removePrecipitationLayer = function() {
   Map.remove(this.layerPrecipitation);
+  this.layerPrecipitationLayer = null;
 }
