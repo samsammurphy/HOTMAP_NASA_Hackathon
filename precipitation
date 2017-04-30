@@ -8,5 +8,4 @@ var ic = ee.ImageCollection('NASA/GPM_L3/IMERG')
   .select(['B2','B3','B4','B5','B6','B7'],['blue','green','red','nir','swir1','swir2']);
 var geom = Map.getCenter();
 var img = ee.Image(ic.first());
-Map.addLayer(img.select(['red','green','blue']), {min:0,min:0.05},'visible')
-Map.centerObject(img)
+Map.addLayer(img.select(['red','green','blue']), {min:0,min:0.05},'visible');
