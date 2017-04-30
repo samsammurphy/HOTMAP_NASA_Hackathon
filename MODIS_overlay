@@ -79,7 +79,7 @@ Map.centerObject(Monterey_geom,10)
 
 
 // Landsat geom, date and projection
-var LandsatImg = img.select(['B1']);
+var LandsatImg = img.select(['blue']);
 var LandsatGeom = LandsatImg.geometry();
 var LandsatDate = ee.Date(LandsatImg.get('system:time_start'));
 var crs = LandsatImg.projection().crs()
@@ -117,8 +117,8 @@ var vectorDisplay = ee.Image(0).updateMask(0)
   .clip(LandsatGeom)
   .paint(MODISvectors, '000000', 3);
   
-Map.addLayer(MODISreproject, {palette: 'gray'})
-Map.addLayer(vectorDisplay, {palette: 'FF0000'}, 'MODIS fire alerts');
+//Map.addLayer(MODISreproject, {palette: 'gray'})
+Map.addLayer(vectorDisplay, {palette: '00FF00'}, 'MODIS fire alerts');
 Map.setCenter(-121.7093, 36.3538,10)
 
 
