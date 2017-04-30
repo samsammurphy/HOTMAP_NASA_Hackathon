@@ -273,7 +273,6 @@ HotMap.prototype.onNextButtonClick = function(){
   print('new date')
   print(newDate)
   
-  //var newd = String(d.getFullYear()) + "-" + String(d.getMonth()+1) + "-" + String(d.getDate() + 1);
   this.dateBoxStart.setValue(newDate.format('YYYY-MM-dd').getInfo(), false);
   var thisObject = this;
 }
