@@ -14,7 +14,7 @@ var ic = ee.ImageCollection('LANDSAT/LC8_L1T_TOA')
   .filterBounds(geom)
   //.filterDate('2016-01-01','2016-01-5')
   .sort('system:time-start')
-  .select(['B5','B6','B7'],['nir','swir1','swir2']);
+  .select(['B2','B3','B4','B5','B6','B7'],['blue','green','red','nir','swir1','swir2']);
   
 // HOTMAP detection (returns hot pixel clusters, i.e. a feature collection per image)
 function HOTMAP(img) {
@@ -74,6 +74,7 @@ function HOTMAP(img) {
 // SINGLE IMAGE
 var img = ee.Image(ic.first())
 Map.addLayer(img.select(['swir2','swir1','nir']),{min:0,max:0.4},'infrared')
+Map.addLayer(img.select(['red','green','blue']), {min:0,min:0.3},'visible')
 Map.centerObject(img)
 
 var hot = HOTMAP(img)
