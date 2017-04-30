@@ -69,7 +69,8 @@ var angle;
 // requires me to do math manually
 function findAngle(x, y) {
   var slope = y.divide(x);
-  
+  theta = Math.atan(slope);
+  return theta * (180/3.14);
 }
 
 /*From what I understood about your question, you want to find the angle between two points given their coordinates. In that case, first find the slope of the line using the slope formula:
@@ -84,7 +85,7 @@ where θθ is the angle. Therefore, the angle θθ equals:
 
 
 
-print(findAngle(ee.Number(10), ee.Number(10))) // 90;
+print(findAngle(10, 10));
 
 
 var line_test = ee.Geometry.LineString([geom,delta])
