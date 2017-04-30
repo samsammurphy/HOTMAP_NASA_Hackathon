@@ -22,6 +22,14 @@ var HotMap = function(){
   //Object Variables
   this.startDate = null;
   this.endDate = null;
+
+  // Map level Data
+  this.data_heat = null;
+  this.map_data_ir = null;
+  this.map_data_rgb = null;
+  this.map_data_wind = null;
+  this.map_data_precipitation = null;
+
   this.ic = null;
   this.init();
 };
@@ -78,6 +86,13 @@ HotMap.prototype.endDateChanged = function(date){
 }
 
 HotMap.prototype.onReRunClick = function(){
+  this.hotnessAnalysis();
+  //Get data for precipitation
+  this.addPrecipitationLayer(this.startDate);
+  //Get all other data (wind, ir, etc)
+}
+
+HotMap.prototype.hotnessAnalysis = function(){
   var geom = Map.getCenter();
   // Landsat 8 collection
   var ic = ee.ImageCollection('LANDSAT/LC8_L1T_TOA')
@@ -94,12 +109,21 @@ HotMap.prototype.onReRunClick = function(){
 
   // SINGLE IMAGE
   var img = ee.Image(ic.first())
+
+  //TODO: Get image date and set date of start date to image date
+
   this.removeLayer('infrared');
   this.removeLayer('hot_vectors');
+  this.removeLayer('rgb');
 
+  //TODO: check if selected and then add to layer
   Map.addLayer(img.select(['swir1','swir2','nir']),{min:0,max:0.4},'infrared')
+  Map.addLayer(img.select(['red','green','blue']),{min:0,max:0.4},'rgb')
+
   var hot = this.runHotMapAnalysis(img)
+  //TODO: check if selected
   Map.addLayer(hot,{color:'FF0000'},'hot_vectors')
+
 }
 /*
   *********************** END ***********************
@@ -117,9 +141,9 @@ HotMap.prototype.setupSidePannel = function(){
   var panel = ui.Panel({style: {width: '400px'}})
   panel.widgets().set(0,ui.Label('Controls',{fontWeight:'bold'}))
   panel.widgets().set(1,this.dateBoxStart)
-  panel.widgets().set(2,this.dateBoxEnd)
-  panel.widgets().set(3,this.reRunAnalysis)
-  panel.widgets().set(4, this.addPrecipitation)
+  //panel.widgets().set(2,this.dateBoxEnd)
+  panel.widgets().set(2,this.reRunAnalysis)
+  panel.widgets().set(3, this.addPrecipitation)
   ui.root.add(panel);
 
 }
@@ -197,13 +221,12 @@ HotMap.prototype.addPrecipitationLayer = function(s, e) {
     }
     this.ic = ee.ImageCollection('UCSB-CHG/CHIRPS/PENTAD')
     //.filterDate('2017-03-01', '2017-03-27');
-    .filterDate(s, e);
+    .filterDate(s);
     var meanPrecip = this.ic.reduce(ee.Reducer.mean());
-    var isPrecipitationOn = this.removeLayer('precipitation');
-    if(!isPrecipitationOn){
-      Map.addLayer(meanPrecip, {min:0,max:10, palette: ['FF0000', '0000FF']}, 'precipitation', true, 0.40);
-    }
-}
+    this.removeLayer('precipitation');
+    Map.addLayer(meanPrecip, {min:0,max:10, palette: ['FF0000', '0000FF']}, 'precipitation', true, 0.40);
+    //TODO: remove precipitation layer by default and check if selected
+  }
 
 //Removes a layer in the map by itterating through values
 HotMap.prototype.removeLayer = function(name){
