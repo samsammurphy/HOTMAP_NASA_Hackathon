@@ -12,4 +12,4 @@ var ic = ee.ImageCollection('LANDSAT/LC8_L1T_TOA')
   .filterBounds(geom)
   .filterDate(startDate,endDate)
 
-// 4) 
+// 4) grab the first valid image in the collection after filtering
