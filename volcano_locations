@@ -1,3 +1,3 @@
-var volcanoes = ee.FeatureCollection('ft:1CFywBl54IDbjL-xuNrdVwexgQqZH-AP7IAM-l_L1')
+var volcanoes = ee.FeatureCollection('ft:1By_TxmjpCjLippFR1REdyA7ULGEAoQPw-EjubYAk')
 
-print(volcanoes.first().get('geometry'))
+print(volcanoes.first())
