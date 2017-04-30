@@ -9,8 +9,6 @@ function addWindLayer(s, e) {
   //.filterDate('2017-03-01', '2017-03-27');
   .select(['Windsfc'])
   .filterDate(s, e);
-  var meanWind = ic.reduce(ee.Reducer.mean());
-  
   
   var layerWind = Map.addLayer(ee.Image(ic.first()), {min:0,max:10, /*palette: ['FF0000', '0000FF']*/}, 'wind', true, 0.40);
 }
