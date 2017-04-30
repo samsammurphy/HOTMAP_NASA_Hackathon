@@ -21,7 +21,7 @@ function addWindLayer(s, e) {
 var geom = ee.Geometry.Point(-116.19, 38.75)
 var wind = addWindLayer()
 
-var wind_point = wind.reduceRegion(geom)
-
-print(wind_point)
-Map.addLayer(geom)
+var wind_point = wind.reduceRegion(ee.Reducer.mean(),geom)
+var wind_u = ee.Number(wind_point.get('wind_u'))
+var wind_v = ee.Number(wind_point.get('wind_v'))
+print(wind_u,wind_v)
