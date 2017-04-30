@@ -17,6 +17,7 @@ var HotMap = function(){
   this.dateBoxStart = null;
   this.dateBoxEnd = null;
   this.reRunAnalysis = null;
+  this.addPrecipitation = null;
 
   //Object Variables
   this.startDate = null;
@@ -35,12 +36,12 @@ HotMap.prototype.init = function(){
   // date textbox
   this.dateBoxStart = ui.Textbox({
      placeholder: 'Enter start date (YYYY-MM-DD)',
-     onChange: this.startDateChanged
+     onChange: function(){thisObject.startDateChanged()}
    });
 
    this.dateBoxEnd = ui.Textbox({
      placeholder: 'Enter end date (YYYY-MM-DD)',
-     onChange: this.endDateChanged
+     onChange: function(){thisObject.endDateChanged()}
    });
 
    //Rerun for selection
@@ -68,10 +69,12 @@ HotMap.prototype.show = function(){
   */
 HotMap.prototype.startDateChanged = function(date){
   print(date)
+  this.startDate = date;
 }
 
 HotMap.prototype.endDateChanged = function(date){
     print(date)
+    this.endDate = date;
 }
 
 HotMap.prototype.onReRunClick = function(){
@@ -83,12 +86,17 @@ HotMap.prototype.onReRunClick = function(){
     .sort('system:time-start')
     .select(['B2','B3','B4','B5','B6','B7'],['blue','green','red','nir','swir1','swir2']);
 
+  if(this.startDate != null && this.startDate != ''){
+    ic = ic.filterDate(this.startDate)
+  }else{
+    ic = ic.sort('system:time-start')
+  }
 
   // SINGLE IMAGE
   var img = ee.Image(ic.first())
   this.removeLayer('infrared');
   this.removeLayer('hot_vectors');
-  
+
   Map.addLayer(img.select(['swir1','swir2','nir']),{min:0,max:0.4},'infrared')
   var hot = this.runHotMapAnalysis(img)
   Map.addLayer(hot,{color:'FF0000'},'hot_vectors')
