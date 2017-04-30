@@ -13,19 +13,32 @@ print(binary)
 Map.addLayer(binary,{color:'FF0000'})
 Map.centerObject(binary)
 
-var images = ee.ImageCollection()
-var i = 1;
-while (i <= 12) { 
-    var start = ee.Date('2001-'+i+'-01');
-    i++;
-    var end = ee.Date('2001-'+i+'-01');
+var imgArr = [];
+var month = 1;
+var year = 2001;
+while (year < 2017) {
+  while (month < 13) { 
+     print(month)
+    var start = ee.Date(year + '-' + month + '-01');
+    month++;
+    var end;
+    if(month == 13) {
+      var y = year + 1;
+      end = ee.Date(y + '-' + month + '-01');
+    } else {
+      end = ee.Date(year + '-' + month + '-01');
+    }
     var FIRMS = ee.ImageCollection('FIRMS')
       .filterDate(start,end)
     var sum = FIRMS.reduce(ee.Reducer.sum())
     var binary = sum.divide(sum).select('T21_sum').rename('binary')
-    images.
-    
+    imgArr.push(binary)
+  }
+  print(year)
+  year++
 }
+var images = ee.ImageCollection(imgArr)
+print(images)
 
 // var images = ee.ImageCollection(imageCollection)
 //   .filterDate(start, finish)
