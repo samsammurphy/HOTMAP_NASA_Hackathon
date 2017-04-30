@@ -30,7 +30,7 @@ while (year < 2017) {
     var sum = FIRMS.reduce(ee.Reducer.sum())
     var binary = sum.divide(sum).select('T21_sum')
       .rename('binary')
-      .visualize({palette: ['000FFF']})
+      .visualize({palette: ['FF0000']})
     var image = ee.Image([binary, binary, binary])
     imgArr.push(image)
   }
