@@ -58,19 +58,33 @@ var du = ee.Number(vector.get('wind_u')).multiply(scale).add(geom.coordinates().
 var dv = ee.Number(vector.get('wind_v')).multiply(scale).add(geom.coordinates().get(1))
 var delta = ee.Geometry.Point(du,dv)
 
+Map.addLayer(delta, {color:'blue'});
+
 var angle;
 
-// takes 2 numbers
+// takes 2 ee.numbers
 // finds angle from X+ axis
+// Special thanks to JavaScript for the Math.atan2 function
+// Special thanks to Google for this weird ee.Number object which
+// requires me to do math manually
 function findAngle(x, y) {
-  var theta = Math.atan2(y, x);
-  theta *= 180 / Math.PI;
-  return theta;
+  var slope = y.divide(x);
+  
 }
 
-print(findAngle(0, 10)) // 90;
-print(findAngle(5, 10)) // 63.4;
-print(findAngle(-10, 10)) // 135, (quadrant 2);
+/*From what I understood about your question, you want to find the angle between two points given their coordinates. In that case, first find the slope of the line using the slope formula:
+m=y2−y1x2−x1
+m=y2−y1x2−x1
+where (x1,y1)(x1,y1) and (x2,y2)(x2,y2) are coordinates on the line. Next, use this formula:
+tan(θ)=m
+tan⁡(θ)=m
+where θθ is the angle. Therefore, the angle θθ equals:
+θ=tan−1(m)
+θ=tan−1⁡(m)*/
+
+
+
+print(findAngle(ee.Number(10), ee.Number(10))) // 90;
 
 
 var line_test = ee.Geometry.LineString([geom,delta])
