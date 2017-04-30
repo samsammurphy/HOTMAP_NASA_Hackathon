@@ -74,6 +74,7 @@ HotMap.prototype.init = function(){
     widgets: [ui.Label('')],
     style: {position: 'bottom-left',shown:false},
   });
+  Map.add(this.label_data_date);
    /*
    End of global ui components
    */
@@ -123,6 +124,9 @@ HotMap.prototype.hotnessAnalysis = function(){
   // SINGLE IMAGE
   var img = ee.Image(ic.first())
   this.startDate = ee.Date(img.get("DATE_ACQUIRED"));
+  this.label_data_date.style().set({shown:true});
+  this.label_data_date.widgets().set(0, ui.Label(this.startDate.format("yyyy-MM-dd")));
+
 
   //TODO: Get image date and set date of start date to image date
 
