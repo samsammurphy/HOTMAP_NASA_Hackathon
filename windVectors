@@ -55,3 +55,14 @@ var vector = ee.Feature(wind_vectors.first())
 print(vector)
 
 
+
+var line_test = ee.Geometry.LineString([fire1,fire2])
+
+Map.addLayer(line_test)
+
+
+
+
+
+
+
