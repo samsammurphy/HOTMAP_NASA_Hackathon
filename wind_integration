@@ -315,9 +315,12 @@ HotMap.prototype.addWindLayer = function(s, hot) {
       return ee.Feature(point1,{'wind_u':wind_u,'wind_v':wind_v})
   
     });
-  
-    Map.addLayer(wind_vectors, {name: 'wind_vectors'});
-    Map.addLayer(wind_points, {name: 'wind_points', color: 'blue'});
+    
+    this.removeLayer('wind_vectors');
+    this.removeLayer('wind_points');
+
+    Map.addLayer(wind_vectors, {}, 'wind_vectors');
+    Map.addLayer(wind_points, {color: 'blue'}, 'wind_point');
   }else{
     this.removeLayer('wind_vectors');
     this.removeLayer('wind_points');
