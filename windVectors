@@ -53,9 +53,9 @@ print(wind_vectors)
 var vector = ee.Feature(wind_vectors.first())
 
 var geom = vector.geometry()
-var scale = 0.001
-var du = ee.Number(geom.coordinates().get(0)).add(vector.get('wind_u'))//.multiply(scale)
-var dv = ee.Number(geom.coordinates().get(1)).add(vector.get('wind_v'))//.multiply(scale)
+var scale = 0.25
+var du = ee.Number(vector.get('wind_u')).multiply(scale).add(geom.coordinates().get(0))
+var dv = ee.Number(vector.get('wind_v')).multiply(scale).add(geom.coordinates().get(1))
 var delta = ee.Geometry.Point(du,dv)
 
 
