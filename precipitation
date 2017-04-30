@@ -1,18 +1,12 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var imageCollection = ee.ImageCollection("NASA/GPM_L3/IMERG");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
-var ic = ee.ImageCollection('NASA/GPM_L3/IMERG')
-.select(['HQprecipitation'])
-.filterDate('2016-01-01','2016-01-5')
+var ic = ee.ImageCollection('UCSB-CHG/CHIRPS/PENTAD')
+.filterDate('2016-01-01','2016-02-01')
 
-//print(ic.first())
+print(ic)
+var meanPrecip = ic.reduce(ee.Reducer.mean())
   
+print(meanPrecip)
+Map.addLayer(meanPrecip, {min:0,max:10, palette: ['FF0000', '0000FF']}, 'precipitation', true, 0.40)
   
-  
-  
-//  .sort('system:time-start')
-  ;
-var geom = Map.getCenter();
-var img = ee.Image(ic.first());
-Map.addLayer(img, {min: 0, max:2});
-print(img)
