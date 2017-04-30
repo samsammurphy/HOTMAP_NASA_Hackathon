@@ -8,7 +8,7 @@ var ic = ee.ImageCollection('LANDSAT/LC8_L1T_TOA')
   .filterDate(Monterey_date,'3000-01-01')
   .select(['B2','B3','B4','B5','B6','B7'],['blue','green','red','nir','swir1','swir2']);
 
-// HOTMAP detection (returns hot pixel clusters, i.e. a feature collection per image)
+// HOTMAP detection
 function HOTMAP(img) {
 
   // wavebands
@@ -62,8 +62,7 @@ function HOTMAP(img) {
   return clusters
 }
 
-// debugging
-// SINGLE IMAGE
+
 var img = ee.Image(ic.first())
 Map.addLayer(img.select(['swir2','swir1','nir']),{min:0,max:0.4},'infrared')
 Map.centerObject(img,10)
@@ -71,14 +70,3 @@ Map.centerObject(img,10)
 var hot = HOTMAP(img)
 print(hot)
 
-
-Export.table.toDrive({'collection':hot,'fileFormat':'kml'})
-
-Map.addLayer(hot,{color:'FF0000'},'hot_vectors')
-//var fires = ic.map(HOTMAP)
-//print(fires)
-//print(fires.flatten())
-//Map.addLayer(fires)
-//Map.centerObject(img)
-
-print(ic)
