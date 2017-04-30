@@ -265,15 +265,15 @@ HotMap.prototype.removeLayer = function(name){
 
 // When the next button is clicked, add a day and re run analysis
 HotMap.prototype.onNextButtonClick = function(){
-  var newDate = ee.Date(this.startDate);
-  print("old date, new date");
-  print(newDate);
-  newDate = newDate.advance(1, 'day').getInfo();
-  print(newDate.value);
-  var d = new ee.Date(newDate.value);
-  print(d)
+  var oldDate = ee.Date(this.startDate);
+  print("old date");
+  print(oldDate);
+  newDate = oldDate.advance(1, 'day');
+  print('new date')
+  print(newDate)
+  
   //var newd = String(d.getFullYear()) + "-" + String(d.getMonth()+1) + "-" + String(d.getDate() + 1);
-  this.dateBoxStart.setValue(d.format('YYYY-MM-dd').getInfo(), false);
+  this.dateBoxStart.setValue(newDate.format('YYYY-MM-dd').getInfo(), false);
   var thisObject = this;
 }
 
