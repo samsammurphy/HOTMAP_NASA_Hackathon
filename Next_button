@@ -1,11 +1,4 @@
-// Test mapping function
-//
-// area
-// fileID, satID, timestamp
 
-
-// The Hawaiian Islands
-//var geom = ee.Geometry.Point(Map.getCenter().coordinates().get(0), Map.getCenter().coordinates().get(1))
 /*
   Declaration of all variables to be used
   which can be initialized and cleared
