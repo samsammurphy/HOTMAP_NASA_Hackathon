@@ -60,15 +60,17 @@ var delta = ee.Geometry.Point(du,dv)
 
 var angle;
 
-// takes 2 ee.Numbers
+// takes 2 numbers
+// finds angle from X+ axis
 function findAngle(x, y) {
   var theta = Math.atan2(y, x);
   theta *= 180 / Math.PI;
   return theta;
 }
 
-print(findAngle(0, 10));
-
+print(findAngle(0, 10)) // 90;
+print(findAngle(5, 10)) // 63.4;
+print(findAngle(-10, 10)) // 135, (quadrant 2);
 
 
 var line_test = ee.Geometry.LineString([geom,delta])
