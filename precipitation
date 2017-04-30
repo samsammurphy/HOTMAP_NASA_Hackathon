@@ -8,6 +8,7 @@ var imageCollection = ee.ImageCollection("NASA/GPM_L3/IMERG");
 // string dateEnd, indicating end of datarange (e.g. '2017-03-27')
 // Return values:
 // like any good function, this function returns void and just has tons of side effects
+
 HotMap.prototype.addPrecipitationLayer = function(s, e) {
   if (!this.layerPrecipitation) {  
     if(s == null){
@@ -22,4 +23,8 @@ HotMap.prototype.addPrecipitationLayer = function(s, e) {
     
     Map.addLayer(meanPrecip, {min:0,max:10, palette: ['FF0000', '0000FF']}, 'precipitation', true, 0.40);
   } 
+}
+
+HotMap.prototype.removePrecipitationLayer = function() {
+  Map.remove('precipitation');
 }
