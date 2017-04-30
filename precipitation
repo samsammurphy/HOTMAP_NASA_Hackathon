@@ -1,5 +1,10 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var imageCollection = ee.ImageCollection("NASA/GPM_L3/IMERG");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
-var ic = ee.ImageCollection('NASA/GPM_L3/IMERG');
+var ic = ee.ImageCollection('NASA/GPM_L3/IMERG')
+  .filterBounds(geom)
+  //.filterDate('2016-01-01','2016-01-5')
+  .sort('system:time-start')
+  .select(['B2','B3','B4','B5','B6','B7'],['blue','green','red','nir','swir1','swir2']);
 var geom = Map.getCenter();
+        
