@@ -11,3 +11,5 @@ var volcanoes_final = volcanoes.map(volcanoPatch)
 
 
 Map.addLayer(volcanoes_final)
+
+print(volcanoes_final)
