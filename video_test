@@ -1,5 +1,7 @@
 var ic = ee.ImageCollection('UCSB-CHG/CHIRPS/PENTAD');
 
 var point = ee.Geometry.Point(-122.262, 37.8719);
-var v = ic.filterBounds(point);
+var start = ee.Date('2014-06-01');
+var finish = ee.Date('2014-10-01');
+var v = ic.filterBounds(point).filterDate(start, finish);
 Export.video.toCloudStorage(v);
