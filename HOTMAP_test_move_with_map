@@ -74,7 +74,7 @@ function HOTMAP(img) {
 // SINGLE IMAGE
 var img = ee.Image(ic.first())
 Map.addLayer(img.select(['swir2','swir1','nir']),{min:0,max:0.4},'infrared')
-Map.addLayer(img.select(['red','green','blue']), {min:0,min:0.1},'visible')
+Map.addLayer(img.select(['red','green','blue']), {min:0,min:0.05},'visible')
 Map.centerObject(img)
 
 var hot = HOTMAP(img)
