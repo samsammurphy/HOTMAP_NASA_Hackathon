@@ -1,0 +1,17 @@
+function addWindLayer(s, e) {
+  if(!s){
+    s = '2017-03-01';
+  }
+  if (!e) {
+    e = '2017-03-27';
+  }
+  var ic = ee.ImageCollection('NOAA/NWS/RTMA')
+  //.filterDate('2017-03-01', '2017-03-27');
+  .filterDate(s, e);
+  var meanWind = ic.reduce(ee.Reducer.mean());
+  
+  
+  var layerWind = Map.addLayer(meanWind, {min:0,max:10, /*palette: ['FF0000', '0000FF']*/}, 'precipitation', true, 0.40);
+}
+
+addWindLayer()
