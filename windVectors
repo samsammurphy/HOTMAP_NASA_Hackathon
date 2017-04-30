@@ -49,7 +49,6 @@ function get_wind_vectors(feature) {
 
 var wind_vectors = fires.map(get_wind_vectors)
 
-// do this for every fire feature
 var vector = ee.Feature(wind_vectors.first())
 var geom = vector.geometry()
 var scale = 0.25
@@ -59,9 +58,6 @@ var windPoint = ee.Geometry.Point(du,dv)
 Map.addLayer(delta, {color:'blue'});
 var line_test = ee.Geometry.LineString([geom,delta])
 Map.addLayer(line_test)
-// // // // // // // // //
-
-
 
 var windPoints = function(feature) {
   var vector = ee.Feature(wind_vectors.first())
@@ -71,63 +67,6 @@ var windPoints = function(feature) {
   var dv = ee.Number(vector.get('wind_v')).multiply(scale).add(geom.coordinates().get(1))
   var delta = ee.Geometry.Point(du,dv)
 };
-
-
-/*var angle;
-
-// takes 2 ee.numbers
-// finds angle from X+ axis
-// Special thanks to JavaScript for the Math.atan2 function
-// Special thanks to Google for this weird ee.Number object which
-// requires me to do math manually
-function findAngle(x, y) {
-  return Math.atan2(y, x) * (180/Math.PI);
-}
-
-
-var angle = findAngle(vector.get('wind_u').getInfo(), vector.get('wind_v').getInfo());
-
-function createTriangle(center, angle, scale) {
-  if (scale === undefined) {
-    scale = 1;
-  }
-  
-  if (angle === undefined) {
-    angle = 90;
-  }
-  var point1x = Math.cos(angle) * (scale / 2) + center.coordinates().get(0).getInfo();
-  print(point1x);
-  var point1y = Math.sin(angle) * (scale / 2) + center.coordinates().get(1).getInfo();
-  print(point1y);
-  
-  var point2x = Math.cos(angle + 120) * (scale / 2) + center.coordinates().get(0).getInfo();
-  print(point2x);
-  var point2y = Math.sin(angle + 120) * (scale / 2) + center.coordinates().get(1).getInfo();
-  print(point2y);
-  
-  var point3x = Math.cos(angle + 240) * (scale / 2) + center.coordinates().get(0).getInfo();
-  print(point3x);
-  var point3y = Math.sin(angle + 240) * (scale / 2) + center.coordinates().get(1).getInfo();
-  print(point3y);
-  
-  var point1 = ee.Geometry.Point(point1x, point3y)
-  var point2 = ee.Geometry.Point(point2x, point3y)
-  var point3 = ee.Geometry.Point(point3x, point3y)
-  
-  
-  var triangle = ee.FeatureCollection([
-  ee.Feature(point1,{}),
-  ee.Feature(point2,{}),
-  ee.Feature(point3,{})
-  ])
-  
-  return triangle.getInfo();
-  
-}
-
-var triangle = createTriangle(delta, angle, 1)
-print(triangle)
-Map.add(triangle);*/
 
 var line_test = ee.Geometry.LineString([geom,delta])
 
