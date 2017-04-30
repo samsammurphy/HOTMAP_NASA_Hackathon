@@ -132,17 +132,16 @@ HotMap.prototype.hotnessAnalysis = function(){
 
 
   //TODO: check if selected and then add to layer
+  this.removeAllOldLayers();
   if(this.chkbx_IR.getValue()){
     this.renameLayer("infrared", "infrared2");
     Map.addLayer(img.select(['swir1','swir2','nir']),{min:0,max:0.4},'infrared');
-    this.removeLayer("infrared2");
   }else{
     this.removeLayer('infrared');
   }
   if(this.chkbx_rgb.getValue()){
     this.renameLayer("rgb", "rgb2");
     Map.addLayer(img.select(['red','green','blue']),{min:0,max:0.4},'rgb');
-    this.removeLayer("rgb2");
   }else{
     this.removeLayer('rgb');
   }
@@ -152,11 +151,9 @@ HotMap.prototype.hotnessAnalysis = function(){
   if(this.chkbx_hotmap.getValue()){
     this.renameLayer("hot_vectors", "hot_vectors2");
     Map.addLayer(hot,{color:'FF0000'},'hot_vectors');
-    this.removeLayer("hot_vectors2");
   }else{
     this.removeLayer('hot_vectors');
   }
-
 }
 /*
   *********************** END ***********************
@@ -290,6 +287,20 @@ HotMap.prototype.renameLayer = function(oldName, newName){
   return found;
 }
 
+HotMap.prototype.removeAllOldLayers = function(){
+  var found = false;
+  for(var i = 0; i <  Map.layers().length(); i++){
+    var layer = Map.layers().get(i);
+
+    if(layer.getName().match("2") != null){
+      Map.remove(layer);
+      found = true;
+    }
+  }
+  return found;
+}
+
+
 
 // When the next button is clicked, add a day and re run analysis
 HotMap.prototype.onNextButtonClick = function(){
@@ -302,3 +313,8 @@ HotMap.prototype.onNextButtonClick = function(){
 // declare the hot object to be used
 var hot = new HotMap();
 hot.show();
+
+
+Map.onChangeCenter(function(){
+  hot.removeAllOldLayers();
+});
