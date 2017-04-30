@@ -52,11 +52,15 @@ print(wind_vectors)
 
 var vector = ee.Feature(wind_vectors.first())
 
-print(vector)
+var geom = vector.geometry()
+var scale = 0.001
+var du = ee.Number(geom.coordinates().get(0)).add(vector.get('wind_u'))//.multiply(scale)
+var dv = ee.Number(geom.coordinates().get(1)).add(vector.get('wind_v'))//.multiply(scale)
+var delta = ee.Geometry.Point(du,dv)
 
 
 
-var line_test = ee.Geometry.LineString([fire1,fire2])
+var line_test = ee.Geometry.LineString([geom,delta])
 
 Map.addLayer(line_test)
 
