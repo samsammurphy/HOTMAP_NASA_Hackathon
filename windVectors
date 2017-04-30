@@ -40,7 +40,7 @@ Map.addLayer(fires)
 // get wind vectors
 function get_wind_vectors(feature) {
   
-  var scale = Map.getScale().multiply(1e-3)
+  var scale = ee.Number(Map.getScale()).multiply(1e-4)
   
   var point0 = feature.geometry()
   var wind_vector = wind.reduceRegion(ee.Reducer.mean(),point0)
@@ -54,11 +54,10 @@ function get_wind_vectors(feature) {
   return ee.Feature(wind_line,{'wind_u':wind_u,'wind_v':wind_v})
   
 }
-print(Map.getScale().multiply(1e-3))
 
 function get_wind_points(feature) {
   
-  var scale = Map.getScale().multiply(1e-3)
+  var scale = ee.Number(Map.getScale()).multiply(1e-4)
   
   var point0 = feature.geometry()
   var wind_vector = wind.reduceRegion(ee.Reducer.mean(),point0)
