@@ -5,5 +5,5 @@ var point = /* color: #d63000 */ee.Geometry.Point([-122.262, 37.8719]),
 
 var start = ee.Date('2014-06-01');
 var finish = ee.Date('2014-10-01');
-var v = ic.filterBounds(point).filterDate(start, finish).select(['B4', 'B3', 'B2'];
+var v = ic.filterBounds(point).filterDate(start, finish).select(['B4', 'B3', 'B2']);
 Export.video.toCloudStorage(v);
