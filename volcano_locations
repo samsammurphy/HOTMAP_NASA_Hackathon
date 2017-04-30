@@ -8,8 +8,8 @@ function volcanoPatch(feature) {
 }
 
 var volcanoes_final = volcanoes.map(volcanoPatch)
-
+//Export.table.toDrive(collection
 
 Map.addLayer(volcanoes_final)
 
-print(volcanoes_final)
+Export.table.toDrive(volcanoes_final,'volcanoes_final')
