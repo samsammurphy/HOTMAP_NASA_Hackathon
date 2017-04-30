@@ -2,4 +2,5 @@ var volcanoes = ee.FeatureCollection('ft:1CFywBl54IDbjL-xuNrdVwexgQqZH-AP7IAM-l_
 
 //Map.addLayer(volcanoes)
 
-print(volcanoes.first())
+var v = volcanoes.first()
+
