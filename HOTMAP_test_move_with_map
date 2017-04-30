@@ -66,8 +66,6 @@ function HOTMAP(img) {
 function generateHotMap(){
   var geom = Map.getCenter();
   // Landsat 8 collection
-  var geom = Map.getCenter();
-  // Landsat 8 collection
   var ic = ee.ImageCollection('LANDSAT/LC8_L1T_TOA')
     .filterBounds(geom)
     //.filterDate('2016-01-01','2016-01-5')
