@@ -9,7 +9,7 @@ var v = volcanoes
 
 var list = volcanoes.toList(4000)
 
-
+print(list.toArray())
 
 print(list)
 /*
