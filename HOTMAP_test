@@ -5,13 +5,13 @@
 
 // The Hawaiian Islands
 var geom = ee.Geometry.LinearRing([-159.41162109375,23.008964269673108,-160.99365234375,21.739091217718574, -155.687255859375,18.093644270502615,-153.907470703125,19.694314241825747,-159.41162109375,23.008964269673108]);
-var geom = ee.Geometry.Point(-121.1243, 36.262)
+var geom = ee.Geometry.Point(-82.576, 35.5669)
 
 // Landsat 8 collection
 var ic = ee.ImageCollection('LANDSAT/LC8_L1T_TOA')
   .filterBounds(geom)
-  .filterDate('2016-07-31','2016-08-30')
-  .select(['B5','B6','B7'],['nir','swir1','swir2']);
+  .filterDate('2016-11-12','2016-11-20')
+  .select(['B2','B3','B4','B5','B6','B7'],['blue','green','red','nir','swir1','swir2']);
   
 // HOTMAP detection (returns hot pixel clusters, i.e. a feature collection per image)
 function HOTMAP(img) {
@@ -71,6 +71,7 @@ function HOTMAP(img) {
 // SINGLE IMAGE
 var img = ee.Image(ic.first())
 Map.addLayer(img.select(['swir2','swir1','nir']),{min:0,max:0.4},'infrared')
+Map.addLayer(img.select(['red','green','blue']),{min:0,max:0.4},'rgb')
 Map.centerObject(img)
 
 var hot = HOTMAP(img)
@@ -94,15 +95,15 @@ print(ic)
 
 function addWindLayer(s, e) {
   if(!s){
-    s = '2016-07-31';
+    s = '2016-11-12';
   }
   if (!e) {
-    e = '2016-08-30';
+    e = '2016-11-20';
   }
   var ic = ee.ImageCollection('NASA/NLDAS/FORA0125_H002')
   //.filterDate('2017-03-01', '2017-03-27');
   .select(['wind_u', 'wind_v'])
-  .filterDate(s, e);
+  .filterDate('2016-11-12','2016-11-20');
   
   var wind = ee.Image(ic.first())
 
@@ -110,7 +111,7 @@ function addWindLayer(s, e) {
 }
 
 var wind = addWindLayer()
-//var layer = Map.addLayer(wind, {min:0,max:10, /*palette: ['FF0000', '0000FF']*/}, 'wind', true, 0.40);
+var layer = Map.addLayer(wind, {min:0,max:10, /*palette: ['FF0000', '0000FF']*/}, 'wind', true, 0.40);
 
 // get wind vectors
 var get_wind_vectors = function(feature) {
@@ -120,8 +121,8 @@ var get_wind_vectors = function(feature) {
   
   var point0 = ee.Geometry.Polygon(ee.List(feature.geometry().coordinates().get(0))).centroid();
   var wind_vector = wind.reduceRegion(ee.Reducer.mean(),point0)
-  var wind_u = ee.Number(wind_vector.get('wind_u'))
-  var wind_v = ee.Number(wind_vector.get('wind_v')).multiply(-1)
+  var wind_u = ee.Number(wind_vector.get('wind_v'))
+  var wind_v = ee.Number(wind_vector.get('wind_u'))
   var du = wind_u.multiply(scale).add(point0.coordinates().get(0))
   var dv = wind_v.multiply(scale).add(point0.coordinates().get(1))
   var point1 = ee.Geometry.Point(du,dv)
@@ -137,8 +138,8 @@ function get_wind_points(feature) {
   
   var point0 = ee.Geometry.Polygon(ee.List(feature.geometry().coordinates().get(0))).centroid()
   var wind_vector = wind.reduceRegion(ee.Reducer.mean(),point0)
-  var wind_u = ee.Number(wind_vector.get('wind_u'))
-  var wind_v = ee.Number(wind_vector.get('wind_v')).multiply(-1)
+  var wind_u = ee.Number(wind_vector.get('wind_v'))
+  var wind_v = ee.Number(wind_vector.get('wind_u'))
   var du = wind_u.multiply(scale).add(point0.coordinates().get(0))
   var dv = wind_v.multiply(scale).add(point0.coordinates().get(1))
   var point1 = ee.Geometry.Point(du,dv)
