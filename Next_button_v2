@@ -266,9 +266,10 @@ HotMap.prototype.removeLayer = function(name){
 // When the next button is clicked, add a day and re run analysis
 HotMap.prototype.onNextButtonClick = function(){
   var oldDate = ee.Date(this.startDate);
+  var newDate = oldDate.advance(1, 'day');
+  
   print("old date");
   print(oldDate);
-  newDate = oldDate.advance(1, 'day');
   print('new date')
   print(newDate)
   
