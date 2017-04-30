@@ -4,3 +4,10 @@ var volcanoes = ee.FeatureCollection('ft:1CFywBl54IDbjL-xuNrdVwexgQqZH-AP7IAM-l_
 
 var v = volcanoes.first()
 
+//var point = ee.Geometry.Point(v.get('geometry'))
+
+
+//var point = ee.Geometry.Point(v.get('geometry'))
+
+var point = ee.String(v.get('geometry')).getInfo()
+print(point)
