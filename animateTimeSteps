@@ -53,7 +53,7 @@ HotMap.prototype.init = function(){
 
    //Rerun for selection
    this.reRunAnalysis = ui.Button({
-     label: 'Re-Run Analysis',
+     label: 'Run Analysis',
      onClick: function(target){thisObject.onReRunClick()}
    });
 
