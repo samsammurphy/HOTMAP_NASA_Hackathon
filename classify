@@ -20,7 +20,6 @@ var fire3 = ee.Geometry.Point(-86.84, 44.34)
 // volcano (hawaii)
 var volcano = ee.Geometry.Point(-155.2286, 19.4329)
 
-
 // fire feature collection
 var hotThings = ee.FeatureCollection([
   ee.Feature(fire1,{}),
