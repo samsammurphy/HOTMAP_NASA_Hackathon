@@ -9,11 +9,11 @@ var imageCollection = ee.ImageCollection("NASA/GPM_L3/IMERG");
 // Return values:
 // like any good function, this function returns void and just has tons of side effects
 function addPrecipitationLayer(dateStart, dateEnd) {
-  const ic = ee.ImageCollection('UCSB-CHG/CHIRPS/PENTAD')
-  .filterDate('2017-03-01', '2017-03-27')
-  const meanPrecip = ic.reduce(ee.Reducer.mean())
+  var ic = ee.ImageCollection('UCSB-CHG/CHIRPS/PENTAD')
+  .filterDate('2017-03-01', '2017-03-27');
+  var meanPrecip = ic.reduce(ee.Reducer.mean());
   
-  Map.addLayer(meanPrecip, {min:0,max:10, palette: ['FF0000', '0000FF']}, 'precipitation', true, 0.40)
+  Map.addLayer(meanPrecip, {min:0,max:10, palette: ['FF0000', '0000FF']}, 'precipitation', true, 0.40);
 }
 
-appPrecipitationLayer('2017-03-01', '2017-03-27');
+addPrecipitationLayer('2017-03-01', '2017-03-27');
