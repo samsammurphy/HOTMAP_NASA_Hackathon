@@ -40,92 +40,41 @@ Map.addLayer(fires)
 // get wind vectors
 function get_wind_vectors(feature) {
   
-  var geom = feature.geometry()
-  var wind_point = wind.reduceRegion(ee.Reducer.mean(),geom)
-  var wind_u = ee.Number(wind_point.get('wind_u'))
-  var wind_v = ee.Number(wind_point.get('wind_v'))
+  var scale = Map.getScale().multiply(1e-3)
   
-  return ee.Feature(geom,{'wind_u':wind_u,'wind_v':wind_v})
+  var point0 = feature.geometry()
+  var wind_vector = wind.reduceRegion(ee.Reducer.mean(),point0)
+  var wind_u = ee.Number(wind_vector.get('wind_u'))
+  var wind_v = ee.Number(wind_vector.get('wind_v'))
+  var du = wind_u.multiply(scale).add(point0.coordinates().get(0))
+  var dv = wind_v.multiply(scale).add(point0.coordinates().get(1))
+  var point1 = ee.Geometry.Point(du,dv)
+  var wind_line = ee.Geometry.LineString([point0,point1])
+  
+  return ee.Feature(wind_line,{'wind_u':wind_u,'wind_v':wind_v})
+  
+}
+print(Map.getScale().multiply(1e-3))
+
+function get_wind_points(feature) {
+  
+  var scale = Map.getScale().multiply(1e-3)
+  
+  var point0 = feature.geometry()
+  var wind_vector = wind.reduceRegion(ee.Reducer.mean(),point0)
+  var wind_u = ee.Number(wind_vector.get('wind_u'))
+  var wind_v = ee.Number(wind_vector.get('wind_v'))
+  var du = wind_u.multiply(scale).add(point0.coordinates().get(0))
+  var dv = wind_v.multiply(scale).add(point0.coordinates().get(1))
+  var point1 = ee.Geometry.Point(du,dv)
+  var wind_line = ee.Geometry.LineString([point0,point1])
+  
+  return ee.Feature(point1,{'wind_u':wind_u,'wind_v':wind_v})
   
 }
 
 var wind_vectors = fires.map(get_wind_vectors)
+Map.addLayer(wind_vectors)
 
-print(wind_vectors)
-
-var vector = ee.Feature(wind_vectors.first())
-
-var geom = vector.geometry()
-var scale = 0.25
-var du = ee.Number(vector.get('wind_u')).multiply(scale).add(geom.coordinates().get(0))
-var dv = ee.Number(vector.get('wind_v')).multiply(scale).add(geom.coordinates().get(1))
-var delta = ee.Geometry.Point(du,dv)
-
-Map.addLayer(delta, {color:'blue'});
-
-/*var angle;
-
-// takes 2 ee.numbers
-// finds angle from X+ axis
-// Special thanks to JavaScript for the Math.atan2 function
-// Special thanks to Google for this weird ee.Number object which
-// requires me to do math manually
-function findAngle(x, y) {
-  return Math.atan2(y, x) * (180/Math.PI);
-}
-
-
-var angle = findAngle(vector.get('wind_u').getInfo(), vector.get('wind_v').getInfo());
-
-function createTriangle(center, angle, scale) {
-  if (scale === undefined) {
-    scale = 1;
-  }
-  
-  if (angle === undefined) {
-    angle = 90;
-  }
-  var point1x = Math.cos(angle) * (scale / 2) + center.coordinates().get(0).getInfo();
-  print(point1x);
-  var point1y = Math.sin(angle) * (scale / 2) + center.coordinates().get(1).getInfo();
-  print(point1y);
-  
-  var point2x = Math.cos(angle + 120) * (scale / 2) + center.coordinates().get(0).getInfo();
-  print(point2x);
-  var point2y = Math.sin(angle + 120) * (scale / 2) + center.coordinates().get(1).getInfo();
-  print(point2y);
-  
-  var point3x = Math.cos(angle + 240) * (scale / 2) + center.coordinates().get(0).getInfo();
-  print(point3x);
-  var point3y = Math.sin(angle + 240) * (scale / 2) + center.coordinates().get(1).getInfo();
-  print(point3y);
-  
-  var point1 = ee.Geometry.Point(point1x, point3y)
-  var point2 = ee.Geometry.Point(point2x, point3y)
-  var point3 = ee.Geometry.Point(point3x, point3y)
-  
-  
-  var triangle = ee.FeatureCollection([
-  ee.Feature(point1,{}),
-  ee.Feature(point2,{}),
-  ee.Feature(point3,{})
-  ])
-  
-  return triangle.getInfo();
-  
-}
-
-var triangle = createTriangle(delta, angle, 1)
-print(triangle)
-Map.add(triangle);*/
-
-var line_test = ee.Geometry.LineString([geom,delta])
-
-Map.addLayer(line_test)
-
-
-
-
-
-
-
+var wind_points = fires.map(get_wind_points)
+Map.addLayer(wind_points, {color: 'blue'});
