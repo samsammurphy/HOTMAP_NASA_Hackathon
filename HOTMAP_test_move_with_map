@@ -6,8 +6,8 @@
 
 
 // The Hawaiian Islands
-var geom = ee.Geometry.LinearRing([-159.41162109375,23.008964269673108,-160.99365234375,21.739091217718574, -155.687255859375,18.093644270502615,-153.907470703125,19.694314241825747,-159.41162109375,23.008964269673108]);
-var geom = ee.Geometry.Point(-155.3082, 19.2839)
+print(Map.getCenter())
+var geom = ee.Geometry.Point(Map.getCenter()[0], Map.getCenter()[1])
 
 // Landsat 8 collection
 var ic = ee.ImageCollection('LANDSAT/LC8_L1T_TOA')
