@@ -80,9 +80,17 @@ HotMap.prototype.endDateChanged = function(date){
 
 HotMap.prototype.onReRunClick = function(){
   this.hotnessAnalysis();
-  //Get data for precipitation
-  this.addPrecipitationLayer(this.startDate);
-  //Get all other data (wind, ir, etc)
+  var thisObject = this;
+  //We must wait for the async call back of the value of the image data
+  this.startDate.evaluate(function(success, failure){
+    thisObject.dateBoxStart.setValue(success, false);
+    thisObject.startDate = success;
+    //Get data for precipitation
+    thisObject.addPrecipitationLayer(thisObject.startDate);
+    //Get all other data (wind, ir, etc)
+
+  })
+
 }
 
 HotMap.prototype.hotnessAnalysis = function(){
@@ -104,17 +112,7 @@ HotMap.prototype.hotnessAnalysis = function(){
 
   // SINGLE IMAGE
   var img = ee.Image(ic.first())
-  img.getInfo()
-  var s = ee.String(img.get("DATE_ACQUIRED"));
-  var thisObject = this;
-  s.evaluate(function(success, failure){
-    // print(s);
-    // print("hey Ho")
-    thisObject.dateBoxStart.setValue(s, false);
-    thisObject.startDate = s;
-
-  })
-  print(this.startDate);
+  this.startDate = ee.String(img.get("DATE_ACQUIRED"));
 
   //TODO: Get image date and set date of start date to image date
 
