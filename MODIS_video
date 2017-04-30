@@ -2,9 +2,11 @@ var geom = ee.Geometry.Rectangle(-121.8645, 36.4069, -121.6035, 36.5262)
 var start = ee.Date('2016-01-01')
 var finish = ee.Date('2016-10-01')
 
+//print(ee.ImageCollection('MODIS/MYD13A1'))
+
 var images = ee.ImageCollection('MODIS/MYD13A1')
   .filterBounds(geom).filterDate(start, finish)
-  .select(['B4', 'B3', 'B2'])
+  //.select(['B4', 'B3', 'B2'])
   .map(function(image) {
     return image.visualize()
   .clip(geom)
@@ -14,4 +16,4 @@ print(images)
 Map.addLayer(geom)
 Map.centerObject(geom)
 
-//Export.video.toDrive(images)
+Export.video.toDrive(images)
