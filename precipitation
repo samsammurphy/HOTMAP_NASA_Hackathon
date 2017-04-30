@@ -21,10 +21,10 @@ HotMap.prototype.addPrecipitationLayer = function(s, e) {
     var meanPrecip = this.ic.reduce(ee.Reducer.mean());
     
     
-    Map.addLayer(meanPrecip, {min:0,max:10, palette: ['FF0000', '0000FF']}, 'precipitation', true, 0.40);
+    this.layerPrecipitation = Map.addLayer(meanPrecip, {min:0,max:10, palette: ['FF0000', '0000FF']}, 'precipitation', true, 0.40);
   } 
 }
 
 HotMap.prototype.removePrecipitationLayer = function() {
-  Map.remove('precipitation');
+  Map.remove(this.layerPrecipitation);
 }
