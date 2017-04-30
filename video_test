@@ -1,4 +1,5 @@
-var ic = ee.ImageCollection('UCSB-CHG/CHIRPS/PENTAD')
+var ic = ee.ImageCollection('UCSB-CHG/CHIRPS/PENTAD');
 
-var v = ic.filterBounds('-122', '37')
-Export.video.toCloudStorage(v)
+var point = ee.Geometry.Point(-122.262, 37.8719);
+var v = ic.filterBounds(point);
+Export.video.toCloudStorage(v);
