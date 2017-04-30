@@ -133,7 +133,7 @@ HotMap.prototype.hotnessAnalysis = function(){
   this.removeLayer('rgb');
 
   //TODO: check if selected and then add to layer
-  if(this.chkbx_ir.getValue()){
+  if(this.chkbx_IR.getValue()){
     Map.addLayer(img.select(['swir1','swir2','nir']),{min:0,max:0.4},'infrared');
   }
   if(this.chkbx_rgb.getValue()){
