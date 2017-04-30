@@ -36,7 +36,7 @@ function classify(feature) {
   var hot = feature.geometry()
   var hot_type = ee.Algorithms.If(hot.containedIn(volcanic_areas),'volcanic','fire')
   
-  return ee.feature(hot,{'hot_type':hot_type}).copyProperties(feature)
+  return ee.Feature(hot,{'hot_type':hot_type}).copyProperties(feature)
 }
 
 var classified = hotThings.map(classify)
