@@ -1,16 +1,18 @@
-/**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var point = /* color: #d63000 */ee.Geometry.Point([-122.262, 37.8719]);
-/***** End of imports. If edited, may not auto-convert in the playground. *****/
-
-var start = ee.Date('2013-06-01');
+var geom = ee.Geometry.Rectangle(-121.8645, 36.4069, -121.6035, 36.5262)
+var start = ee.Date('2016-01-01');
 var finish = ee.Date('2016-10-01');
 
-var v = ee.ImageCollection('LANDSAT/LC8_L1T_TOA')
-  .filterBounds(point).filterDate(start, finish)
+var images = ee.ImageCollection('LANDSAT/LC8_L1T_TOA')
+  .filterBounds(geom).filterDate(start, finish)
   .select(['B4', 'B3', 'B2'])
   .map(function(image) {
-    return image.multiply(512).uint8();
+    return image.multiply(512).uint8()
+  .clip(geom)
   //.visualize()
   });
 
-Export.video.toDrive(v);
+print(images)
+Map.addLayer(geom)
+Map.centerObject(geom)
+
+Export.video.toDrive(images);
