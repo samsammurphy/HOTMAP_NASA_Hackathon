@@ -23,6 +23,7 @@ var HotMap = function(){
   this.chkbx_rgb = null;
   this.chkbx_hotmap = null;
   this.chkbx_wind = null;
+  this.label_data_date = null;
 
   //Object Variables
   this.startDate = null;
@@ -68,6 +69,11 @@ HotMap.prototype.init = function(){
   this.chkbx_hotmap =  ui.Checkbox("Fires", true);
   this.chkbx_wind =  ui.Checkbox("Wind", true);
 
+  //On map labels
+  this.label_data_date = ui.Panel({
+    widgets: [ui.Label('')],
+    style: {position: 'bottom-left',shown:false},
+  });
    /*
    End of global ui components
    */
