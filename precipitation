@@ -2,7 +2,7 @@
 var imageCollection = ee.ImageCollection("NASA/GPM_L3/IMERG");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 var ic = ee.ImageCollection('UCSB-CHG/CHIRPS/PENTAD')
-.filterDate('2016-01-01','2016-02-01')
+.filterDate('2017-03-01','2017-03-27')
 
 print(ic)
 var meanPrecip = ic.reduce(ee.Reducer.mean())
