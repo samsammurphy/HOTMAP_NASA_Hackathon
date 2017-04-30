@@ -1,15 +1,21 @@
-var volcanoes = ee.FeatureCollection('ft:1By_TxmjpCjLippFR1REdyA7ULGEAoQPw-EjubYAk')
+// var volcanoes = ee.FeatureCollection('ft:1By_TxmjpCjLippFR1REdyA7ULGEAoQPw-EjubYAk')
 
-function volcanoPatch(feature) {
-  var lat = ee.Number(feature.get('latitude'))
-  var lon = ee.Number(feature.get('longitude'))
-  var geom = ee.Geometry.Point(lon,lat).buffer(50000)
-  return ee.Feature(geom,{}).copyProperties(feature)
-}
+// function volcanoPatch(feature) {
+//   var lat = ee.Number(feature.get('latitude'))
+//   var lon = ee.Number(feature.get('longitude'))
+//   var geom = ee.Geometry.Point(lon,lat).buffer(50000)
+//   return ee.Feature(geom,{}).copyProperties(feature)
+// }
 
-var volcanoes_final = volcanoes.map(volcanoPatch)
-//Export.table.toDrive(collection
+// var volcanoes_final = volcanoes.map(volcanoPatch)
+// //Export.table.toDrive(collection
+
+// Map.addLayer(volcanoes_final)
+
+// Export.table.toDrive(volcanoes_final,'volcanoes_final')
+
+var volcanoes_final = ee.FeatureCollection('ft:1ST27t3szmBW28L1N5xPE6EUriHCPtgLZITHMb1WO')
 
 Map.addLayer(volcanoes_final)
 
-Export.table.toDrive(volcanoes_final,'volcanoes_final')
+print(volcanoes_final)
