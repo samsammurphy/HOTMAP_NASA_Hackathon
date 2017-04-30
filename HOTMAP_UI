@@ -12,9 +12,16 @@
 */
 var HotMap = function(){
   this.name = "HotMap";
+
+  //UI components
   this.dateBoxStart = null;
   this.dateBoxEnd = null;
   this.reRunAnalysis = null;
+  this.addPrecipitation = null;
+
+  //Object Variables
+  this.startDate = null;
+  this.endDate = null;
   this.ic = null;
   this.init();
 };
@@ -40,6 +47,11 @@ HotMap.prototype.init = function(){
    this.reRunAnalysis = ui.Button({
      label: 'Re-Run Analysis',
      onClick: this.onReRunClick(this)
+   });
+
+   this.addPrecipitation = ui.Button({
+     label: 'Re-Run Analysis',
+     onClick: this.addPrecipitationLayer(this, this.startDate, this.endDate)
    });
    /*
    End of global ui components
@@ -157,6 +169,25 @@ HotMap.prototype.runHotMapAnalysis = function(img) {
 
   return clusters
 }
+
+/**
+  Grabs precipitation data and plots it on map
+**/
+// function addPrecipitationLayer(dateStart, dateEnd)
+// Parameters:
+// string dateStart, indicating start of data range (e.g. '2017-03-01')
+// string dateEnd, indicating end of datarange (e.g. '2017-03-27')
+// Return values:
+// like any good function, this function returns void and just has tons of side effects
+HotMap.prototype.addPrecipitationLayer = function(thisObject, dateStart, dateEnd) {
+    thisObject.ic = ee.ImageCollection('UCSB-CHG/CHIRPS/PENTAD')
+    //.filterDate('2017-03-01', '2017-03-27');
+    .filterDate(dateStart, dateEnd);
+    var meanPrecip = thisObject.ic.reduce(ee.Reducer.mean());
+    
+    Map.addLayer(meanPrecip, {min:0,max:10, palette: ['FF0000', '0000FF']}, 'precipitation', true, 0.40);
+}
+
 
 
 // declare the hot object to be used
