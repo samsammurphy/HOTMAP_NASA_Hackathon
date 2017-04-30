@@ -10,7 +10,7 @@ function get_volcanic_areas() {
 }
 
 var volcanic_areas = get_volcanic_areas()
-Map.addLayer(volcanic_areas)
+//Map.addLayer(volcanic_areas)
 
 // fire features
 var fire1 = ee.Geometry.Point(-116.19, 38.75)
@@ -28,7 +28,7 @@ var hotThings = ee.FeatureCollection([
   ee.Feature(volcano,{})
   ])
 
-Map.addLayer(hotThings,{color:'red'})
+//Map.addLayer(hotThings,{color:'red'})
 
 
 function classify(feature) {
