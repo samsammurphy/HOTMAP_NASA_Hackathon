@@ -15,4 +15,5 @@ var ic = ee.ImageCollection('LANDSAT/LC8_L1T_TOA')
 // 4) grab the first valid image in the collection after filtering
 var img = ee.Image(ic.first())
 
-Map.addlayer(img)
+Map.addLayer(img)
+Map.centerObject(img)
