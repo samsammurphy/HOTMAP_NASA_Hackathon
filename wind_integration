@@ -320,7 +320,7 @@ HotMap.prototype.addWindLayer = function(s, hot) {
     this.removeLayer('wind_points');
 
     Map.addLayer(wind_vectors, {}, 'wind_vectors');
-    Map.addLayer(wind_points, {color: 'blue'}, 'wind_point');
+    Map.addLayer(wind_points, {color: 'blue'}, 'wind_points');
   }else{
     this.removeLayer('wind_vectors');
     this.removeLayer('wind_points');
