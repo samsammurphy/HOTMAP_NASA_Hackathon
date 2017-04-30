@@ -23,13 +23,6 @@ var HotMap = function(){
   this.startDate = null;
   this.endDate = null;
 
-  // Map level Data
-  this.data_heat = null;
-  this.map_data_ir = null;
-  this.map_data_rgb = null;
-  this.map_data_wind = null;
-  this.map_data_precipitation = null;
-
   this.ic = null;
   this.init();
 };
