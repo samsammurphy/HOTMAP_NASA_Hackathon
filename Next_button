@@ -280,7 +280,6 @@ HotMap.prototype.onNextButtonClick = function(){
   print(newDate.value);
   var d = new Date(newDate.value);
   var newd = String(d.getFullYear()) + "-" + String(d.getMonth()+1) + "-" + String(d.getDate() + 1);
-  print(newd);
   this.dateBoxStart.setValue(newd, false);
   var thisObject = this;
 }
