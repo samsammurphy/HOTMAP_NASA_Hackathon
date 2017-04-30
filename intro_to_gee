@@ -1,0 +1,15 @@
+// 1) define a geometry
+var geom = ee.Geometry.Point(-155.3082, 19.2839)
+
+// 2) define a date range
+var startDate = ee.Date('2016-01-01')
+var endDate = ee.Date('2016-01-5')
+
+// 3) define an image collection (i.e. images from a particular satellite)
+//
+// and filter it..
+var ic = ee.ImageCollection('LANDSAT/LC8_L1T_TOA')
+  .filterBounds(geom)
+  .filterDate(startDate,endDate)
+
+// 4) 
