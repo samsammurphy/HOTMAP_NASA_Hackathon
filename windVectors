@@ -10,7 +10,18 @@ function addWindLayer(s, e) {
   .select(['wind_u', 'wind_v'])
   .filterDate(s, e);
   
-  var layerWind = Map.addLayer(ee.Image(ic.first()), {min:0,max:10, /*palette: ['FF0000', '0000FF']*/}, 'wind', true, 0.40);
+  var wind = ee.Image(ic.first())
+  
+  var layer = Map.addLayer(wind, {min:0,max:10, /*palette: ['FF0000', '0000FF']*/}, 'wind', true, 0.40);
+
+  return wind
 }
 
-addWindLayer()
+
+var geom = ee.Geometry.Point(-116.19, 38.75)
+var wind = addWindLayer()
+
+var wind_point = wind.reduceRegion(geom)
+
+print(wind_point)
+Map.addLayer(geom)
