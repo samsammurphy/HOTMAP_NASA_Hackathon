@@ -67,6 +67,6 @@ var img = ee.Image(ic.first())
 Map.addLayer(img.select(['swir2','swir1','nir']),{min:0,max:0.4},'infrared')
 
 var hot = HOTMAP(img)
-print(hot)
+Map.addLayer(hot,{color:'red'},'hot_vectors')
 
 Map.centerObject(Monterey_geom,10)
