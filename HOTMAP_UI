@@ -6,154 +6,159 @@
 
 // The Hawaiian Islands
 //var geom = ee.Geometry.Point(Map.getCenter().coordinates().get(0), Map.getCenter().coordinates().get(1))
+/*
+  Declaration of all variables to be used
+  which can be initialized and cleared
+*/
+var HotMap = function(){
+  this.name = "HotMap";
+  this.dateBoxStart = null;
+  this.dateBoxEnd = null;
+  this.reRunAnalysis = null;
+  this.ic = null;
+  this.init();
+};
 
-class HotMap{
 
+
+HotMap.prototype.init = function(){
   /*
-    Declaration of all variables to be used
-    which can be initialized and cleared
+  Generates UI components as global variables
   */
-  constructor(){
-    this.dateBoxStart = null;
-    this.dateBoxEnd = null;
-    this.reRunAnalysis = null;
-    this.ic = null;
-    this.init();
-  }
+  // date textbox
+  this.dateBoxStart = ui.Textbox({
+     placeholder: 'Enter start date (YYYY-MM-DD)',
+     onChange: this.startDateChanged
+   });
 
-  function init(){
-    /*
-    Generates UI components as global variables
-    */
-    // date textbox
-    this.dateBoxStart = ui.Textbox({
-       placeholder: 'Enter start date (YYYY-MM-DD)',
-       onChange: startDateChanged
-     });
+   this.dateBoxEnd = ui.Textbox({
+     placeholder: 'Enter end date (YYYY-MM-DD)',
+     onChange: this.endDateChanged
+   });
 
-     this.dateBoxEnd = ui.Textbox({
-       placeholder: 'Enter end date (YYYY-MM-DD)',
-       onChange: endDateChanged
-     });
+   //Rerun for selection
+   this.reRunAnalysis = ui.Button({
+     label: 'Re-Run Analysis',
+     onClick: this.onReRunClick(this)
+   });
+   /*
+   End of global ui components
+   */
+}
 
-     //Rerun for selection
-     this.reRunAnalysis = ui.Button({
-       label: 'Re-Run Analysis',
-       onClick: onReRunClick
-     });
-     /*
-     End of global ui components
-     */
-  }
+HotMap.prototype.show = function(){
+  this.setupSidePannel();
+  //this.onReRunClick();
+}
 
-  function show(){
-    this.setupSidePannel();
-    //this.onReRunClick();
-  }
+/*
+  *********************** Handlers of UI call back functions ***********************
+  */
+HotMap.prototype.startDateChanged = function(date){
+  print(date)
+}
 
-
-
-  // Handlers of UI call back functions
-
-  function startDateChanged(date){
+HotMap.prototype.endDateChanged = function(date){
     print(date)
-  }
-  function endDateChanged(date){
-      print(date)
-  }
-  function onReRunClick(){
-    var geom = Map.getCenter();
-    // Landsat 8 collection
-    var ic = ee.ImageCollection('LANDSAT/LC8_L1T_TOA')
-      .filterBounds(geom)
-      //.filterDate('2016-01-01','2016-01-5')
-      .sort('system:time-start')
-      .select(['B2','B3','B4','B5','B6','B7'],['blue','green','red','nir','swir1','swir2']);
+}
+
+HotMap.prototype.onReRunClick = function(thisObject){
+  var geom = Map.getCenter();
+  // Landsat 8 collection
+  var ic = ee.ImageCollection('LANDSAT/LC8_L1T_TOA')
+    .filterBounds(geom)
+    //.filterDate('2016-01-01','2016-01-5')
+    .sort('system:time-start')
+    .select(['B2','B3','B4','B5','B6','B7'],['blue','green','red','nir','swir1','swir2']);
 
 
-    // SINGLE IMAGE
-    var img = ee.Image(ic.first())
-    Map.addLayer(img.select(['swir1','swir2','nir']),{min:0,max:0.4},'infrared')
-    var hot = HOTMAP(img)
-    Map.addLayer(hot,{color:'FF0000'},'hot_vectors')
-  }
-  // End handlers of UI functions
-
-
-  // Generates the side pannel
-  function setupSidePannel(){
-    // PANELS
-    // ********************************************************************************************
-    // main panel
-    var panel = ui.Panel({style: {width: '400px'}})
-    panel.widgets().set(0,ui.Label('Controls',{fontWeight:'bold'}))
-    panel.widgets().set(1,dateBoxStart)
-    panel.widgets().set(2,dateBoxEnd)
-    panel.widgets().set(3,reRunAnalysis)
-    ui.root.add(panel);
-
-  }
-
-  /**
-    Fancy pants function to do the actual SCIENCE!!!
+  // SINGLE IMAGE
+  var img = ee.Image(ic.first())
+  Map.addLayer(img.select(['swir1','swir2','nir']),{min:0,max:0.4},'infrared')
+  print(thisObject.name)
+  var hot = thisObject.runHotMapAnalysis(img)
+  Map.addLayer(hot,{color:'FF0000'},'hot_vectors')
+}
+/*
+  *********************** END ***********************
   */
-  // HOTMAP detection (returns hot pixel clusters, i.e. a feature collection per image)
-  function runHotMapAnalysis(img) {
-
-    // wavebands
-    var n  = img.select('nir')
-    var s1 = img.select('swir1')
-    var s2 = img.select('swir2')
-
-    // alpha detection
-    var a1 = s2.divide(s1).gt(1.4)
-    var a2 = s2.divide(n).gt(1.4)
-    var a3 = s2.gt(0.15)
-    var alpha = a1.and(a2).and(a3).rename('alpha')
-
-    // beta detection
-    var b1 = s1.divide(n).gt(2)
-    var b2 = s1.gt(0.5)
-    var beta = b1.and(b2).rename('beta')
-
-    // potential hot pixels
-    var potentialHot = alpha.or(beta)
-    var hotPixels = potentialHot.updateMask(potentialHot)
-
-    // hot pixel clusters (count alpha pixels)
-    var hotClusters = hotPixels.addBands(alpha).reduceToVectors({
-      eightConnected:true,
-      maxPixels:2e8,//might seem like a lot but MOST pixels are masked
-      reducer:ee.Reducer.count()
-    })
-
-    // hot pixel clusters must contain alpha pixels
-    var validHotClusters = hotClusters.filter(ee.Filter.gt('count', 0));
-
-    // Image properties
-    var fileID = img.get('system:index')
-    var satID = ee.String(fileID).slice(0,3)
-    var timestamp = img.get('system:time_start')
-
-    // Assign properties
-    var clusters = validHotClusters.map(function(feature) {
-      var clusterGeom = feature.geometry()
-      var clusterArea = feature.geometry().area(1) // i.e. to within 1 m2
-      var cluster = ee.Feature(clusterGeom,{
-        fileID:fileID,
-        satID:satID,
-        timestamp:timestamp,
-        area:clusterArea
-      })
-      return cluster
-    })
-
-    return clusters
-  }
 
 
+
+
+
+// Generates the side pannel
+HotMap.prototype.setupSidePannel = function(){
+  // PANELS
+  // ********************************************************************************************
+  // main panel
+  var panel = ui.Panel({style: {width: '400px'}})
+  panel.widgets().set(0,ui.Label('Controls',{fontWeight:'bold'}))
+  panel.widgets().set(1,this.dateBoxStart)
+  panel.widgets().set(2,this.dateBoxEnd)
+  panel.widgets().set(3,this.reRunAnalysis)
+  ui.root.add(panel);
 
 }
 
-var hot = HotMap();
+/**
+  Fancy pants function to do the actual SCIENCE!!!
+*/
+// HOTMAP detection (returns hot pixel clusters, i.e. a feature collection per image)
+HotMap.prototype.runHotMapAnalysis = function(img) {
+
+  // wavebands
+  var n  = img.select('nir')
+  var s1 = img.select('swir1')
+  var s2 = img.select('swir2')
+
+  // alpha detection
+  var a1 = s2.divide(s1).gt(1.4)
+  var a2 = s2.divide(n).gt(1.4)
+  var a3 = s2.gt(0.15)
+  var alpha = a1.and(a2).and(a3).rename('alpha')
+
+  // beta detection
+  var b1 = s1.divide(n).gt(2)
+  var b2 = s1.gt(0.5)
+  var beta = b1.and(b2).rename('beta')
+
+  // potential hot pixels
+  var potentialHot = alpha.or(beta)
+  var hotPixels = potentialHot.updateMask(potentialHot)
+
+  // hot pixel clusters (count alpha pixels)
+  var hotClusters = hotPixels.addBands(alpha).reduceToVectors({
+    eightConnected:true,
+    maxPixels:2e8,//might seem like a lot but MOST pixels are masked
+    reducer:ee.Reducer.count()
+  })
+
+  // hot pixel clusters must contain alpha pixels
+  var validHotClusters = hotClusters.filter(ee.Filter.gt('count', 0));
+
+  // Image properties
+  var fileID = img.get('system:index')
+  var satID = ee.String(fileID).slice(0,3)
+  var timestamp = img.get('system:time_start')
+
+  // Assign properties
+  var clusters = validHotClusters.map(function(feature) {
+    var clusterGeom = feature.geometry()
+    var clusterArea = feature.geometry().area(1) // i.e. to within 1 m2
+    var cluster = ee.Feature(clusterGeom,{
+      fileID:fileID,
+      satID:satID,
+      timestamp:timestamp,
+      area:clusterArea
+    })
+    return cluster
+  })
+
+  return clusters
+}
+
+
+// declare the hot object to be used
+var hot = new HotMap();
 hot.show();
