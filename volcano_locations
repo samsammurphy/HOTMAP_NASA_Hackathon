@@ -2,12 +2,29 @@ var volcanoes = ee.FeatureCollection('ft:1CFywBl54IDbjL-xuNrdVwexgQqZH-AP7IAM-l_
 
 //Map.addLayer(volcanoes)
 
-var v = volcanoes.first()
+var v = volcanoes
 
 //var point = ee.Geometry.Point(v.get('geometry'))
 
 
-//var point = ee.Geometry.Point(v.get('geometry'))
+var list = volcanoes.toList(4000)
 
-var point = v.get('geometry')
-print(point)
+print(list)
+/*
+//var point = ee.Geometry.Point(v.get('geometry'))
+function getPoints(feature) {
+  
+  var point = feature.get('geometry')
+  
+  return ee.Feature(ee.Geometry.Point())
+  
+}
+
+
+
+vnew = v.map( function(v, i, arr) {
+  return v[i]
+});
+
+var point = v.get('geometry').getInfo()
+print(point)*/
