@@ -3,7 +3,7 @@ var volcanoes = ee.FeatureCollection('ft:1By_TxmjpCjLippFR1REdyA7ULGEAoQPw-EjubY
 function volcanoPatch(feature) {
   var lat = ee.Number(feature.get('latitude'))
   var lon = ee.Number(feature.get('longitude'))
-  var geom = ee.Geometry.Point(lon,lat)
+  var geom = ee.Geometry.Point(lon,lat).buffer(50000)
   return ee.Feature(geom,{}).copyProperties(feature)
 }
 
