@@ -1,5 +1,5 @@
 // Monterey_Fire
-var Monterey_geom = ee.Geometry.Point(-121.1243, 36.262)
+var Monterey_geom = ee.Geometry.Point(-121.7326, 36.3395)
 var Monterey_date = ee.Date('2016-07-31')
 
 // Landsat 8 collection
@@ -65,8 +65,8 @@ function HOTMAP(img) {
 
 var img = ee.Image(ic.first())
 Map.addLayer(img.select(['swir2','swir1','nir']),{min:0,max:0.4},'infrared')
-Map.centerObject(img,10)
 
 var hot = HOTMAP(img)
 print(hot)
 
+Map.centerObject(Monterey_geom,10)
