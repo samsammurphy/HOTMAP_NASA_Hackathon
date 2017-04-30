@@ -19,7 +19,7 @@ function addWindLayer(s, e) {
 }
 
 var wind = addWindLayer()
-//var layer = Map.addLayer(wind, {min:0,max:10, /*palette: ['FF0000', '0000FF']*/}, 'wind', true, 0.40);
+//var layer = Map.addLayer(wind, {min:0,max:10, palette: ['FF0000', '0000FF']*/}, 'wind', true, 0.40);
 
 
 // fire features
@@ -39,29 +39,27 @@ Map.addLayer(fires)
 
 // get wind vectors
 function get_wind_vectors(feature) {
-  
   var geom = feature.geometry()
   var wind_point = wind.reduceRegion(ee.Reducer.mean(),geom)
   var wind_u = ee.Number(wind_point.get('wind_u'))
   var wind_v = ee.Number(wind_point.get('wind_v'))
-  
+
   return ee.Feature(geom,{'wind_u':wind_u,'wind_v':wind_v})
-  
 }
 
 var wind_vectors = fires.map(get_wind_vectors)
 
-print(wind_vectors)
-
+// do this for every fire feature
 var vector = ee.Feature(wind_vectors.first())
-
 var geom = vector.geometry()
 var scale = 0.25
 var du = ee.Number(vector.get('wind_u')).multiply(scale).add(geom.coordinates().get(0))
 var dv = ee.Number(vector.get('wind_v')).multiply(scale).add(geom.coordinates().get(1))
 var delta = ee.Geometry.Point(du,dv)
-
 Map.addLayer(delta, {color:'blue'});
+// // // // // // // // //
+
+fires.map( )
 
 /*var angle;
 
