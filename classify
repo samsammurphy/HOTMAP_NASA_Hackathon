@@ -41,7 +41,7 @@ function classify(feature) {
 }
 
 var classified = hotThings.map(classify)
-
+//filter then print t map
 
 print(classified)
 
