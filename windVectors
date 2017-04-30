@@ -12,7 +12,7 @@ function addWindLayer(s, e) {
   var meanWind = ic.reduce(ee.Reducer.mean());
   
   
-  var layerWind = Map.addLayer(ic.first(), {min:0,max:10, /*palette: ['FF0000', '0000FF']*/}, 'wind', true, 0.40);
+  var layerWind = Map.addLayer(ee.Image(ic.first()), {min:0,max:10, /*palette: ['FF0000', '0000FF']*/}, 'wind', true, 0.40);
 }
 
 addWindLayer()
