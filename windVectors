@@ -58,6 +58,17 @@ var du = ee.Number(vector.get('wind_u')).multiply(scale).add(geom.coordinates().
 var dv = ee.Number(vector.get('wind_v')).multiply(scale).add(geom.coordinates().get(1))
 var delta = ee.Geometry.Point(du,dv)
 
+var angle;
+
+// takes 2 ee.Numbers
+function findAngle(x, y) {
+  var theta = Math.atan2(y, x);
+  theta *= 180 / Math.PI;
+  return theta;
+}
+
+print(findAngle(0, 10));
+
 
 
 var line_test = ee.Geometry.LineString([geom,delta])
