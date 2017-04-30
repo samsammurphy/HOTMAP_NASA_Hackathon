@@ -50,6 +50,8 @@ Export.video.toDrive({
   framesPerSecond: 12,
   region: polygon
 });
+Map.addLayer(polygon)
+Map.centerObject(polygon)
 
 
 // var images = ee.ImageCollection(imageCollection)
