@@ -1,0 +1,73 @@
+// Monterey_Fire
+var Monterey_geom = ee.Geometry.Point(-121.7326, 36.3395)
+var Monterey_date = ee.Date('2016-07-31')
+
+// Landsat 8 collection
+var ic = ee.ImageCollection('LANDSAT/LC8_L1T_TOA')
+  .filterBounds(Monterey_geom)
+  .filterDate(Monterey_date,'3000-01-01')
+  .select(['B2','B3','B4','B5','B6','B7'],['blue','green','red','nir','swir1','swir2']);
+
+// HOTMAP detection
+function HOTMAP(img) {
+
+  // wavebands
+  var n  = img.select('nir')
+  var s1 = img.select('swir1')
+  var s2 = img.select('swir2')
+
+  // alpha detection
+  var a1 = s2.divide(s1).gt(1.4)
+  var a2 = s2.divide(n).gt(1.4)
+  var a3 = s2.gt(0.15)
+  var alpha = a1.and(a2).and(a3).rename('alpha')
+
+  // beta detection
+  var b1 = s1.divide(n).gt(2)
+  var b2 = s1.gt(0.5)
+  var beta = b1.and(b2).rename('beta')
+
+  // potential hot pixels
+  var potentialHot = alpha.or(beta)
+  var hotPixels = potentialHot.updateMask(potentialHot)
+  
+  // hot pixel clusters (count alpha pixels)
+  var hotClusters = hotPixels.addBands(alpha).reduceToVectors({
+    eightConnected:true,
+    maxPixels:2e8,//might seem like a lot but MOST pixels are masked
+    reducer:ee.Reducer.count()
+  })
+  
+  // hot pixel clusters must contain alpha pixels
+  var validHotClusters = hotClusters.filter(ee.Filter.gt('count', 0));
+  
+  // Image properties
+  var fileID = img.get('system:index')
+  var satID = ee.String(fileID).slice(0,3)
+  var timestamp = img.get('system:time_start')
+  
+  // Assign properties
+  var clusters = validHotClusters.map(function(feature) {
+    var clusterGeom = feature.geometry()
+    var clusterArea = feature.geometry().area(1) // i.e. to within 1 m2
+    var cluster = ee.Feature(clusterGeom,{
+      fileID:fileID,
+      satID:satID,
+      timestamp:timestamp,
+      area:clusterArea
+    })
+    return cluster
+  })
+  
+  return clusters
+}
+
+
+var img = ee.Image(ic.first())
+Map.addLayer(img.select(['swir2','swir1','nir']),{min:0,max:0.4},'infrared')
+Map.addLayer(img.select(['red','green','blue']),{min:0,max:0.4},'visible')
+
+var hot = HOTMAP(img)
+Map.addLayer(hot,{color:'red'},'hot_vectors')
+
+Map.centerObject(Monterey_geom,10)
