@@ -1,3 +1,6 @@
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+var geometry = /* color: #d63000 */ee.Geometry.MultiPoint();
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
 function addWindLayer(s, e) {
   if(!s){
     s = '2014-03-01';
@@ -60,7 +63,7 @@ var delta = ee.Geometry.Point(du,dv)
 
 Map.addLayer(delta, {color:'blue'});
 
-var angle;
+/*var angle;
 
 // takes 2 ee.numbers
 // finds angle from X+ axis
@@ -68,20 +71,8 @@ var angle;
 // Special thanks to Google for this weird ee.Number object which
 // requires me to do math manually
 function findAngle(x, y) {
-  var theta = Math.atan2(y, x);
-  return theta * (180/Math.PI);
+  return Math.atan2(y, x) * (180/Math.PI);
 }
-
-/*From what I understood about your question, you want to find the angle between two points given their coordinates. In that case, first find the slope of the line using the slope formula:
-m=y2−y1x2−x1
-m=y2−y1x2−x1
-where (x1,y1)(x1,y1) and (x2,y2)(x2,y2) are coordinates on the line. Next, use this formula:
-tan(θ)=m
-tan⁡(θ)=m
-where θθ is the angle. Therefore, the angle θθ equals:
-θ=tan−1(m)
-θ=tan−1⁡(m)*/
-
 
 
 var angle = findAngle(vector.get('wind_u').getInfo(), vector.get('wind_v').getInfo());
@@ -109,9 +100,24 @@ function createTriangle(center, angle, scale) {
   var point3y = Math.sin(angle + 240) * (scale / 2) + center.coordinates().get(1).getInfo();
   print(point3y);
   
+  var point1 = ee.Geometry.Point(point1x, point3y)
+  var point2 = ee.Geometry.Point(point2x, point3y)
+  var point3 = ee.Geometry.Point(point3x, point3y)
+  
+  
+  var triangle = ee.FeatureCollection([
+  ee.Feature(point1,{}),
+  ee.Feature(point2,{}),
+  ee.Feature(point3,{})
+  ])
+  
+  return triangle.getInfo();
+  
 }
 
-createTriangle(delta, angle, 1)
+var triangle = createTriangle(delta, angle, 1)
+print(triangle)
+Map.add(triangle);*/
 
 var line_test = ee.Geometry.LineString([geom,delta])
 
