@@ -38,7 +38,7 @@ var images = ee.ImageCollection(imgArr)
 print(images)
 
 
-var polygon = ee.Geometry.Rectangle([-150, 60, -122.0241, 170]);
+var polygon = ee.Geometry.Rectangle([-150, 55, 150, -55]);
 Export.video.toDrive({
   collection: images,
   description: 'videoTest',
