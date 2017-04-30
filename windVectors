@@ -86,6 +86,16 @@ where θθ is the angle. Therefore, the angle θθ equals:
 
 print(findAngle(vector.get('wind_u').getInfo(), vector.get('wind_v').getInfo()));
 
+function createTriangle(center, angle, scale) {
+  if (scale === undefined) {
+    scale = 1;
+  }
+  
+  if (angle === undefined) {
+    angle = 90;
+  }
+}
+
 
 var line_test = ee.Geometry.LineString([geom,delta])
 
