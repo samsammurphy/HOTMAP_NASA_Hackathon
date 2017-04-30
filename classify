@@ -41,6 +41,10 @@ function classify(feature) {
 }
 
 var classified = hotThings.map(classify)
+
+var volcanoes = classified.filter()
+var fire = classified.filter()
+
 //filter then print t map
 
 print(classified)
