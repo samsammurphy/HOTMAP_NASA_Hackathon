@@ -34,7 +34,8 @@ Map.addLayer(hotThings,{color:'red'})
 function classify(feature) {
   
   var hot = feature.geometry()
-  var hot_type = ee.Algorithms.If(hot.containedIn(volcanic_areas),'volcanic','fire')
+  var volcanic = hot.containedIn(volcanic_areas)
+  var hot_type = ee.Algorithms.If(volcanic,'volcanic','fire')
   
   return ee.Feature(hot,{'hot_type':hot_type}).copyProperties(feature)
 }
