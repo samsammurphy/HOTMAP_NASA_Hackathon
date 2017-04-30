@@ -1,6 +1,22 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var geometry = /* color: #d63000 */ee.Geometry.MultiPoint();
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
+// fire features
+var fire1 = ee.Geometry.Point(-116.19, 38.75)
+var fire2 = ee.Geometry.Point(-105.21, 34.96)
+var fire3 = ee.Geometry.Point(-86.84, 44.34)
+
+// fire feature collection
+var fires = ee.FeatureCollection([
+  ee.Feature(fire1,{}),
+  ee.Feature(fire2,{}),
+  ee.Feature(fire3,{})
+  ])
+
+// see fires on map
+Map.addLayer(fires)
+
+
 function addWindLayer(s, e) {
   if(!s){
     s = '2014-03-01';
@@ -20,22 +36,6 @@ function addWindLayer(s, e) {
 
 var wind = addWindLayer()
 //var layer = Map.addLayer(wind, {min:0,max:10, /*palette: ['FF0000', '0000FF']*/}, 'wind', true, 0.40);
-
-
-/*// fire features
-var fire1 = ee.Geometry.Point(-116.19, 38.75)
-var fire2 = ee.Geometry.Point(-105.21, 34.96)
-var fire3 = ee.Geometry.Point(-86.84, 44.34)
-
-// fire feature collection
-var fires = ee.FeatureCollection([
-  ee.Feature(fire1,{}),
-  ee.Feature(fire2,{}),
-  ee.Feature(fire3,{})
-  ])
-
-// see fires on map
-Map.addLayer(fires)*/
 
 // get wind vectors
 function get_wind_vectors(feature) {
