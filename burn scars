@@ -71,3 +71,15 @@ var hot = HOTMAP(img)
 Map.addLayer(hot,{color:'red'},'hot_vectors')
 
 Map.centerObject(Monterey_geom,10)
+
+// Normalized Burn Ratio
+var NBR = img.normalizedDifference(['nir','swir2'])
+
+Map.addLayer(NBR,{},'NBR')
+
+
+
+
+
+
+
