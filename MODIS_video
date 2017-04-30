@@ -6,7 +6,7 @@ print(ee.ImageCollection('MODIS/MYD13A1'))
 
 var images = ee.ImageCollection('MODIS/MYD13A1')
   .filterBounds(geom).filterDate(start, finish)
-  //.select(['NDVI, 'EVI', 'DetailedQA'])
+  .select(['NDVI', 'EVI', 'DetailedQA'])
   .map(function(image) {
     return image.visualize()
   .clip(geom)
@@ -16,4 +16,4 @@ print(images)
 Map.addLayer(geom)
 Map.centerObject(geom)
 
-//Export.video.toDrive(images)
+Export.video.toDrive(images)
