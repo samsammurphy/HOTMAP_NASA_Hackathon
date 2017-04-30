@@ -1,0 +1,278 @@
+// Test mapping function
+//
+// area
+// fileID, satID, timestamp
+
+
+// The Hawaiian Islands
+//var geom = ee.Geometry.Point(Map.getCenter().coordinates().get(0), Map.getCenter().coordinates().get(1))
+/*
+  Declaration of all variables to be used
+  which can be initialized and cleared
+*/
+var HotMap = function(){
+  this.name = "HotMap";
+
+  //UI components
+  this.dateBoxStart = null;
+  this.dateBoxEnd = null;
+  this.reRunAnalysis = null;
+  this.addPrecipitation = null;
+  this.chkbx_IR = null;
+  this.chkbx_precipitation = null;
+  this.chkbx_rgb = null;
+  this.chkbx_hotmap = null;
+  this.chkbx_wind = null;
+
+  //Object Variables
+  this.startDate = null;
+  this.endDate = null;
+
+  this.ic = null;
+  this.init();
+};
+
+
+
+HotMap.prototype.init = function(){
+  /*
+  Generates UI components as global variables
+  */
+  var thisObject = this;
+  // date textbox
+  this.dateBoxStart = ui.Textbox({
+     placeholder: 'Enter start date (YYYY-MM-DD)',
+     onChange: function(date){thisObject.startDateChanged(date)}
+   });
+
+   this.dateBoxEnd = ui.Textbox({
+     placeholder: 'Enter end date (YYYY-MM-DD)',
+     onChange: function(date){thisObject.endDateChanged(date)}
+   });
+
+   //Rerun for selection
+   this.reRunAnalysis = ui.Button({
+     label: 'Re-Run Analysis',
+     onClick: function(target){thisObject.onReRunClick()}
+   });
+
+   this.addPrecipitation = ui.Button({
+     label: 'Precipitation',
+     onClick: function(target){thisObject.addPrecipitationLayer(thisObject.startDate, thisObject.endDate)}
+   });
+   
+  //Check boxes
+  this.chkbx_IR = ui.Checkbox("Infrared", true);
+  this.chkbx_precipitation =  ui.Checkbox("Precipitation", false);
+  this.chkbx_rgb =  ui.Checkbox("RGB", false);
+  this.chkbx_hotmap =  ui.Checkbox("Fires", true);
+  this.chkbx_wind =  ui.Checkbox("Wind", true);
+  
+   /*
+   End of global ui components
+   */
+}
+
+HotMap.prototype.show = function(){
+  this.setupSidePannel();
+  //this.onReRunClick();
+}
+
+/*
+  *********************** Handlers of UI call back functions ***********************
+  */
+HotMap.prototype.startDateChanged = function(date){
+  print(date)
+  this.startDate = date;
+}
+
+HotMap.prototype.endDateChanged = function(date){
+    print(date)
+    this.endDate = date;
+}
+
+HotMap.prototype.onReRunClick = function(){
+  this.hotnessAnalysis();
+  var thisObject = this;
+  //We must wait for the async call back of the value of the image data
+  this.startDate.evaluate(function(success, failure){
+    thisObject.dateBoxStart.setValue(success, false);
+    thisObject.startDate = success;
+    //Get data for precipitation
+    thisObject.addPrecipitationLayer(thisObject.startDate);
+    //Get all other data (wind, ir, etc)
+
+  })
+
+}
+
+HotMap.prototype.hotnessAnalysis = function(){
+  var geom = Map.getCenter();
+  // Landsat 8 collection
+  var ic = ee.ImageCollection('LANDSAT/LC8_L1T_TOA')
+    .filterBounds(geom)
+    //.filterDate('2016-01-01','2016-01-5')
+    .sort('system:time-start')
+    .select(['B2','B3','B4','B5','B6','B7'],['blue','green','red','nir','swir1','swir2']);
+
+  if(this.startDate != null && this.startDate != ''){
+    var d = ee.Date.parse("yyyy-MM-dd", this.startDate)
+    ic = ic.filterDate(this.startDate, '3000-01-01')
+  }else{
+    ic = ic.sort('system:time-start')
+  }
+
+  // SINGLE IMAGE
+  var img = ee.Image(ic.first())
+  this.startDate = ee.String(img.get("DATE_ACQUIRED"));
+
+  //TODO: Get image date and set date of start date to image date
+
+  this.removeLayer('infrared');
+  this.removeLayer('hot_vectors');
+  this.removeLayer('rgb');
+
+  //TODO: check if selected and then add to layer
+  if(this.chkbx_ir.getValue()){
+    Map.addLayer(img.select(['swir1','swir2','nir']),{min:0,max:0.4},'infrared');
+  }
+  if(this.chkbx_rgb.getValue()){
+    Map.addLayer(img.select(['red','green','blue']),{min:0,max:0.4},'rgb');
+  }
+
+  var hot = this.runHotMapAnalysis(img)
+  //TODO: check if selected    
+  if(this.chkbx_hotmap.getValue()){
+    Map.addLayer(hot,{color:'FF0000'},'hot_vectors');
+  }
+
+}
+/*
+  *********************** END ***********************
+  */
+
+
+
+
+
+// Generates the side pannel
+HotMap.prototype.setupSidePannel = function(){
+  // PANELS
+  // ********************************************************************************************
+  // main panel
+  var panel = ui.Panel({style: {width: '400px'}})
+  panel.widgets().set(0,ui.Label('Controls',{fontWeight:'bold'}))
+  panel.widgets().set(1,this.dateBoxStart)
+  //panel.widgets().set(2,this.dateBoxEnd)
+  panel.widgets().set(2, this.reRunAnalysis);
+  panel.widgets().set(3, this.addPrecipitation);
+  panel.widgets().set(4, this.chkbx_IR);
+  panel.widgets().set(5, this.chkbx_precipitation);
+  panel.widgets().set(6, this.chkbx_rgb);
+  panel.widgets().set(7, this.chkbx_hotmap);
+  panel.widgets().set(8, this.chkbx_wind);
+
+  ui.root.add(panel);
+
+}
+
+/**
+  Fancy pants function to do the actual SCIENCE!!!
+*/
+// HOTMAP detection (returns hot pixel clusters, i.e. a feature collection per image)
+HotMap.prototype.runHotMapAnalysis = function(img) {
+
+  // wavebands
+  var n  = img.select('nir')
+  var s1 = img.select('swir1')
+  var s2 = img.select('swir2')
+
+  // alpha detection
+  var a1 = s2.divide(s1).gt(1.4)
+  var a2 = s2.divide(n).gt(1.4)
+  var a3 = s2.gt(0.15)
+  var alpha = a1.and(a2).and(a3).rename('alpha')
+
+  // beta detection
+  var b1 = s1.divide(n).gt(2)
+  var b2 = s1.gt(0.5)
+  var beta = b1.and(b2).rename('beta')
+
+  // potential hot pixels
+  var potentialHot = alpha.or(beta)
+  var hotPixels = potentialHot.updateMask(potentialHot)
+
+  // hot pixel clusters (count alpha pixels)
+  var hotClusters = hotPixels.addBands(alpha).reduceToVectors({
+    eightConnected:true,
+    maxPixels:2e8,//might seem like a lot but MOST pixels are masked
+    reducer:ee.Reducer.count()
+  })
+
+  // hot pixel clusters must contain alpha pixels
+  var validHotClusters = hotClusters.filter(ee.Filter.gt('count', 0));
+
+  // Image properties
+  var fileID = img.get('system:index')
+  var satID = ee.String(fileID).slice(0,3)
+  var timestamp = img.get('system:time_start')
+
+  // Assign properties
+  var clusters = validHotClusters.map(function(feature) {
+    var clusterGeom = feature.geometry()
+    var clusterArea = feature.geometry().area(1) // i.e. to within 1 m2
+    var cluster = ee.Feature(clusterGeom,{
+      fileID:fileID,
+      satID:satID,
+      timestamp:timestamp,
+      area:clusterArea
+    })
+    return cluster
+  })
+
+  return clusters
+}
+
+/**
+  Grabs precipitation data and plots it on map
+**/
+// function addPrecipitationLayer(dateStart, dateEnd)
+// Parameters:
+// string dateStart, indicating start of data range (e.g. '2017-03-01')
+// string dateEnd, indicating end of datarange (e.g. '2017-03-27')
+// Return values:
+// like any good function, this function returns void and just has tons of side effects
+HotMap.prototype.addPrecipitationLayer = function(s, e) {
+    if(s == null){
+      s = '2017-03-01';
+      e = '2017-03-27';
+    }
+    this.ic = ee.ImageCollection('UCSB-CHG/CHIRPS/PENTAD')
+    //.filterDate('2017-03-01', '2017-03-27');
+    .filterDate(ee.Date(s),ee.Date(s).advance(10, 'day'));
+    var meanPrecip = this.ic.reduce(ee.Reducer.mean());
+    this.removeLayer('precipitation');
+    if(this.chkbx_precipitation.getValue()){
+      Map.addLayer(meanPrecip, {min:0,max:10, palette: ['FF0000', '0000FF']}, 'precipitation', true, 0.40);
+    }
+    //TODO: remove precipitation layer by default and check if selected
+  }
+
+//Removes a layer in the map by itterating through values
+HotMap.prototype.removeLayer = function(name){
+      var found = false;
+    for(var i = 0; i <  Map.layers().length(); i++){
+      var layer = Map.layers().get(i);
+      if(layer.getName() == name){
+        Map.remove(layer);
+        found = true;
+      }
+    }
+    return found;
+}
+
+
+
+// declare the hot object to be used
+var hot = new HotMap();
+hot.show();
