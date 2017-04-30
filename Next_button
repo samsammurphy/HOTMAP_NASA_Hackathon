@@ -277,14 +277,11 @@ HotMap.prototype.onNextButtonClick = function(){
   print("old date, new date");
   print(newDate);
   newDate = newDate.advance(1, 'day');
-  print(newDate);
   var thisObject = this;
-  newDate.getInfo();
-  this.dateBoxStart.setValue(newDate, false);
   newDate.evaluate(function(success, failure){
-    print(success);
+    print(typeof(success))
     thisObject.dateBoxStart.setValue(success, false);
-    thisObject.startDate = success.format("yyyy-MM-dd");
+    thisObject.startDate = success;
     thisObject.hotnessAnalysis();
   })
 
