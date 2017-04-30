@@ -1,8 +1,19 @@
 var volcanoes = ee.FeatureCollection('ft:1By_TxmjpCjLippFR1REdyA7ULGEAoQPw-EjubYAk')
 
+var v = ee.Feature(volcanoes.first())
+var lat = ee.Number(v.get('latitude'))
+var lon = ee.Number(v.get('longitude'))
+
+print(lat)
 
 
+var geom = ee.Geometry.Point(lon,lat)
 
+
+print(geom)
+
+Map.addLayer(geom)
+Map.centerObject(geom)
 // function getFC(feature) {
   
   
