@@ -10,7 +10,7 @@ var ic = ee.ImageCollection('LANDSAT/LC8_SR')
 var img = ee.Image(ic.first()).divide(1000)
 
 
-Map.addLayer(img,{bands:['B4','B3','B2'],min:0,max:0.2},'image')
+Map.addLayer(img,{bands:['B4','B3','B2'],min:0,max:0.1},'image')
 Map.addLayer(geom,{color:'red'},'geom')
 Map.centerObject(img)
 
