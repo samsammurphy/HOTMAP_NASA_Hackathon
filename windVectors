@@ -22,7 +22,7 @@ var wind = addWindLayer()
 //var layer = Map.addLayer(wind, {min:0,max:10, /*palette: ['FF0000', '0000FF']*/}, 'wind', true, 0.40);
 
 
-// fire features
+/*// fire features
 var fire1 = ee.Geometry.Point(-116.19, 38.75)
 var fire2 = ee.Geometry.Point(-105.21, 34.96)
 var fire3 = ee.Geometry.Point(-86.84, 44.34)
@@ -35,7 +35,7 @@ var fires = ee.FeatureCollection([
   ])
 
 // see fires on map
-Map.addLayer(fires)
+Map.addLayer(fires)*/
 
 // get wind vectors
 function get_wind_vectors(feature) {
