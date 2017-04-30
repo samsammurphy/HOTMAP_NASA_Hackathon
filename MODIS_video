@@ -37,7 +37,12 @@ while (year < 2017) {
 var images = ee.ImageCollection(imgArr)
 print(images)
 
-
+Export.video.toDrive({
+  collection: images,
+  description: 'videoTest',
+  dimensions: 720,
+  framesPerSecond: 12
+});
 
 
 // var images = ee.ImageCollection(imageCollection)
@@ -64,17 +69,17 @@ print(images)
 //     return image.multiply(512).uint8();
 //   });
 
-// // Define an area to export.
+// Define an area to export.
 // var polygon = ee.Geometry.Rectangle([-122.7286, 37.6325, -122.0241, 37.9592]);
 
-// //Map.addLayer(polygon)
-// //Map.centerObject(polygon)
+//Map.addLayer(polygon)
+//Map.centerObject(polygon)
 
-// // Export (change dimensions or scale for higher quality).
-// //Export.video.toDrive({
-// //  collection: collection,
-// //  description: 'videoTest',
-// //  dimensions: 720,
-// //  framesPerSecond: 12,
-// //  region: polygon
-// //});
+// Export (change dimensions or scale for higher quality).
+//Export.video.toDrive({
+//  collection: collection,
+//  description: 'videoTest',
+//  dimensions: 720,
+//  framesPerSecond: 12,
+//  region: polygon
+//});
