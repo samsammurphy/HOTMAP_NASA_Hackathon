@@ -125,7 +125,7 @@ HotMap.prototype.hotnessAnalysis = function(){
   var img = ee.Image(ic.first())
   this.startDate = ee.Date(img.get("DATE_ACQUIRED"));
   this.label_data_date.style().set({shown:true});
-  this.label_data_date.widgets().set(0, ui.Label(this.startDate.format("yyyy-MM-dd")));
+  this.label_data_date.widgets().set(0, ui.Label("Data Date: " + this.startDate.format("yyyy-MM-dd").getInfo()));
 
 
   //TODO: Get image date and set date of start date to image date
