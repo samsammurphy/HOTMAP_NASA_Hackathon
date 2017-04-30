@@ -37,6 +37,7 @@ while (year < 2017) {
 }
 var images = ee.ImageCollection(imgArr)
 print(images)
+Map.addLayer(images)
 
 
 var polygon = ee.Geometry.Rectangle([-150, 55, 150, -55]);
