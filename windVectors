@@ -19,7 +19,7 @@ function addWindLayer(s, e) {
 }
 
 var wind = addWindLayer()
-var layer = Map.addLayer(wind, {min:0,max:10, /*palette: ['FF0000', '0000FF']*/}, 'wind', true, 0.40);
+//var layer = Map.addLayer(wind, {min:0,max:10, /*palette: ['FF0000', '0000FF']*/}, 'wind', true, 0.40);
 
 
 // fire features
