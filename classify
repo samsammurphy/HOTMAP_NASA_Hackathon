@@ -1,41 +1,47 @@
-// function get_volcanic_areas() {
-//   var volcanoes = ee.FeatureCollection('ft:1By_TxmjpCjLippFR1REdyA7ULGEAoQPw-EjubYAk')
-//   function volcanoPatch(feature) {
-//     var lat = ee.Number(feature.get('latitude'))
-//     var lon = ee.Number(feature.get('longitude'))
-//     var geom = ee.Geometry.Point(lon,lat).buffer(50000)
-//     return ee.Feature(geom,{}).copyProperties(feature)
-//   }
-//   return volcanoes.map(volcanoPatch)
-// }
+function get_volcanic_areas() {
+  var volcanoes = ee.FeatureCollection('ft:1By_TxmjpCjLippFR1REdyA7ULGEAoQPw-EjubYAk')
+  function volcanoPatch(feature) {
+    var lat = ee.Number(feature.get('latitude'))
+    var lon = ee.Number(feature.get('longitude'))
+    var geom = ee.Geometry.Point(lon,lat).buffer(50000)
+    return ee.Feature(geom,{}).copyProperties(feature)
+  }
+  return volcanoes.map(volcanoPatch)
+}
 
-// var volcanic_areas = get_volcanic_areas()
-// Map.addLayer(volcanic_areas)
+var volcanic_areas = get_volcanic_areas()
+Map.addLayer(volcanic_areas)
 
-// // fire features
-// var fire1 = ee.Geometry.Point(-116.19, 38.75)
-// var fire2 = ee.Geometry.Point(-105.21, 34.96)
-// var fire3 = ee.Geometry.Point(-86.84, 44.34)
+// fire features
+var fire1 = ee.Geometry.Point(-116.19, 38.75)
+var fire2 = ee.Geometry.Point(-105.21, 34.96)
+var fire3 = ee.Geometry.Point(-86.84, 44.34)
 
-// // volcano (hawaii)
-// var volcano = ee.Geometry.Point(-155.2286, 19.4329)
+// volcano (hawaii)
+var volcano = ee.Geometry.Point(-155.2286, 19.4329)
 
-// // fire feature collection
-// var hotThings = ee.FeatureCollection([
-//   ee.Feature(fire1,{}),
-//   ee.Feature(fire2,{}),
-//   ee.Feature(fire3,{}),
-//   ee.Feature(volcano,{})
-//   ])
+// fire feature collection
+var hotThings = ee.FeatureCollection([
+  ee.Feature(fire1,{}),
+  ee.Feature(fire2,{}),
+  ee.Feature(fire3,{}),
+  ee.Feature(volcano,{})
+  ])
 
-// Map.addLayer(hotThings,{color:'red'})
+Map.addLayer(hotThings,{color:'red'})
 
 
-var hot = ee.Geometry.Point(-155.0967, 19.6219)
-var volcanic_area = ee.Geometry.Point(-155.3714, 19.5287).buffer(10000)
+function classify(feature) {
+  
+  var hot = feature.geometry()
+  var hot_type = ee.Algorithms.If(hot.containedIn(volcanic_areas),'volcanic','fire')
+  
+  return ee.feature(hot,{'hot_type':hot_type}).copyProperties(feature)
+}
 
-Map.addLayer(volcanic_area)
-Map.addLayer(hot,{color:'red'})
+var classified = hotThings.map(classify)
 
-print(hot.containedIn(volcanic_area))
+
+print(classified)
+
 
