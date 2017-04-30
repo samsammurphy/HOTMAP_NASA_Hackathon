@@ -276,16 +276,13 @@ HotMap.prototype.onNextButtonClick = function(){
   var newDate = ee.Date(this.startDate);
   print("old date, new date");
   print(newDate);
-  newDate = newDate.advance(1, 'day');
+  newDate = newDate.advance(1, 'day').getInfo();
+  print(newDate.value);
+  var d = new Date(newDate.value);
+  var newd = String(d.getFullYear()) + "-" + String(d.getMonth()+1) + "-" + String(d.getDate() + 1);
+  print(newd);
+  this.dateBoxStart.setValue(newd, false);
   var thisObject = this;
-  newDate.evaluate(function(success, failure){
-    print(typeof(success))
-    thisObject.dateBoxStart.setValue(success, false);
-    thisObject.startDate = success;
-    thisObject.hotnessAnalysis();
-  })
-
-  
 }
 
 
