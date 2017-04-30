@@ -38,13 +38,13 @@ var images = ee.ImageCollection(imgArr)
 print(images)
 
 
-// var polygon = ee.Geometry.Rectangle([-122.7286, 37.6325, -122.0241, 37.9592]);
+var polygon = ee.Geometry.Rectangle([-150, 60, -122.0241, 170]);
 Export.video.toDrive({
-  collection: test,
+  collection: images,
   description: 'videoTest',
   dimensions: 720,
   framesPerSecond: 12,
-//  region: polygon
+  region: polygon
 });
 
 
