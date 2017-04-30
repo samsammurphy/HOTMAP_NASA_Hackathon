@@ -135,7 +135,7 @@ HotMap.prototype.hotnessAnalysis = function(){
   this.removeAllOldLayers();
   if(this.chkbx_IR.getValue()){
     this.renameLayer("infrared", "infrared2");
-    Map.addLayer(img.select(['swir1','swir2','nir']),{min:0,max:0.4},'infrared');
+    Map.addLayer(img.select(['swir2','swir1','nir']),{min:0,max:0.4},'infrared');
   }else{
     this.removeLayer('infrared');
   }
