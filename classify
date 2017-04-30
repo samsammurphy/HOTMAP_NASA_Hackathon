@@ -42,11 +42,14 @@ function classify(feature) {
 
 var classified = hotThings.map(classify)
 
-var volcanoes = classified.filter()
-var fire = classified.filter()
+var volcanoes = classified.filter(ee.Filter.eq('hot_type','volcanic'))
+var fires = classified.filter(ee.Filter.eq('hot_type','fire'))
 
 //filter then print t map
+print(volcanoes)
+print(fires)
 
-print(classified)
+Map.addLayer(volcanoes,{color:'purple'})
+Map.addLayer(fires,{color:'red'})
 
 
