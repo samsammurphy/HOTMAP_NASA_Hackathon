@@ -180,9 +180,7 @@ HotMap.prototype.runHotMapAnalysis = function(img) {
 // string dateEnd, indicating end of datarange (e.g. '2017-03-27')
 // Return values:
 // like any good function, this function returns void and just has tons of side effects
-HotMap.prototype.addPrecipitationLayer = function(dateStart, dateEnd) {
-    var s = dateStart;
-    var e = dateEnd;
+HotMap.prototype.addPrecipitationLayer = function(s, e) {
     if(s == null){
       s = '2017-03-01';
       e = '2017-03-27';
@@ -192,7 +190,9 @@ HotMap.prototype.addPrecipitationLayer = function(dateStart, dateEnd) {
     .filterDate(s, e);
     var meanPrecip = this.ic.reduce(ee.Reducer.mean());
     
-    Map.addLayer(meanPrecip, {min:0,max:10, palette: ['FF0000', '0000FF']}, 'precipitation', true, 0.40);
+    if (!this.addPrecipitation) {
+      Map.addLayer(meanPrecip, {min:0,max:10, palette: ['FF0000', '0000FF']}, 'precipitation', true, 0.40);
+    } 
 }
 
 
