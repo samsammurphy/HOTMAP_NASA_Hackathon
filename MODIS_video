@@ -28,8 +28,10 @@ while (year < 2017) {
     var FIRMS = ee.ImageCollection('FIRMS')
       .filterDate(start, end)
     var sum = FIRMS.reduce(ee.Reducer.sum())
-    var binary = sum.divide(sum).select('T21_sum').rename('binary')
-    var image = ee.Image([binary, binary, binary]).visualize()
+    var binary = sum.divide(sum).select('T21_sum')
+      .rename('binary')
+      .visualize({palette: ['000FFF']})
+    var image = ee.Image([binary, binary, binary])
     imgArr.push(image)
   }
   month = 1
