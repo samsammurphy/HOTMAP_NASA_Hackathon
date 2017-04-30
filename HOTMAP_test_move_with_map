@@ -6,13 +6,14 @@
 
 
 // The Hawaiian Islands
-print(Map.getCenter())
-var geom = ee.Geometry.Point(Map.getCenter()[0], Map.getCenter()[1])
-
+print(Map.getCenter().coordinates().get(0))
+//var geom = ee.Geometry.Point(Map.getCenter().coordinates().get(0), Map.getCenter().coordinates().get(1))
+var geom = Map.getCenter();
 // Landsat 8 collection
 var ic = ee.ImageCollection('LANDSAT/LC8_L1T_TOA')
   .filterBounds(geom)
-  .filterDate('2016-01-01','2016-01-5')
+  //.filterDate('2016-01-01','2016-01-5')
+  .sort('system:time-start')
   .select(['B5','B6','B7'],['nir','swir1','swir2']);
   
 // HOTMAP detection (returns hot pixel clusters, i.e. a feature collection per image)
@@ -79,7 +80,7 @@ var hot = HOTMAP(img)
 print(hot)
 
 
-Export.table.toDrive({'collection':hot,'fileFormat':'kml'})
+//Export.table.toDrive({'collection':hot,'fileFormat':'kml'})
 
 Map.addLayer(hot,{color:'FF0000'},'hot_vectors')
 //var fires = ic.map(HOTMAP)
