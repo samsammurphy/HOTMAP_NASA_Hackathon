@@ -87,3 +87,69 @@ Map.addLayer(hot,{color:'FF0000'},'hot_vectors')
 //Map.centerObject(img)
 
 print(ic)
+
+function addWindLayer(s, e) {
+  if(!s){
+    s = '2014-03-01';
+  }
+  if (!e) {
+    e = '2014-03-27';
+  }
+  var ic = ee.ImageCollection('NASA/NLDAS/FORA0125_H002')
+  //.filterDate('2017-03-01', '2017-03-27');
+  .select(['wind_u', 'wind_v'])
+  .filterDate(s, e);
+  
+  var wind = ee.Image(ic.first())
+
+  return wind
+}
+
+var wind = addWindLayer()
+//var layer = Map.addLayer(wind, {min:0,max:10, /*palette: ['FF0000', '0000FF']*/}, 'wind', true, 0.40);
+
+// get wind vectors
+function get_wind_vectors(feature) {
+  
+  var scale = ee.Number(Map.getScale()).multiply(1e-4)
+  
+  var point0 = feature.geometry()
+  var wind_vector = wind.reduceRegion(ee.Reducer.mean(),point0)
+  var wind_u = ee.Number(wind_vector.get('wind_u'))
+  var wind_v = ee.Number(wind_vector.get('wind_v'))
+  var du = wind_u.multiply(scale).add(point0.coordinates().get(0))
+  var dv = wind_v.multiply(scale).add(point0.coordinates().get(1))
+  var point1 = ee.Geometry.Point(du,dv)
+  var wind_line = ee.Geometry.LineString([point0,point1])
+  print(point0)
+  
+  return ee.Feature(wind_line,{'wind_u':wind_u,'wind_v':wind_v})
+  
+}
+
+function get_wind_points(feature) {
+  
+  var scale = ee.Number(Map.getScale()).multiply(1e-4)
+  
+  var point0 = feature.geometry()
+  var wind_vector = wind.reduceRegion(ee.Reducer.mean(),point0)
+  var wind_u = ee.Number(wind_vector.get('wind_u'))
+  var wind_v = ee.Number(wind_vector.get('wind_v'))
+  var du = wind_u.multiply(scale).add(point0.coordinates().get(0))
+  var dv = wind_v.multiply(scale).add(point0.coordinates().get(1))
+  var point1 = ee.Geometry.Point(du,dv)
+  var wind_line = ee.Geometry.LineString([point0,point1])
+  
+  return ee.Feature(point1,{'wind_u':wind_u,'wind_v':wind_v})
+  
+}
+
+var wind_vectors = hot.map(get_wind_vectors)
+Map.addLayer(wind_vectors)
+
+print(wind_vectors)
+
+var wind_points = hot.map(get_wind_points)
+Map.addLayer(wind_points, {color: 'blue'});
+
+print(wind_points)
