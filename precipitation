@@ -2,4 +2,4 @@
 var imageCollection = ee.ImageCollection("NASA/GPM_L3/IMERG");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 var ic = ee.ImageCollection('NASA/GPM_L3/IMERG');
-
+var geom = Map.getCenter();
