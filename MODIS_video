@@ -1,3 +1,10 @@
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+var polygon = /* color: #d63000 */ee.Geometry.Polygon(
+        [[[-19.69, 37.72],
+          [-19.69, -35.46],
+          [53.44, -35.46],
+          [53.44, 37.72]]]);
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
 var imgArr = [];
 var year = 2001;
 while (year < 2017) {
@@ -29,9 +36,6 @@ var images = ee.ImageCollection(imgArr)
 print(images)
 Map.addLayer(images)
 
-
-var polygon = ee.Geometry.Rectangle([-19.69, -35.46,53.44, 37.72]);
-//var polygon = ee.Geometry.Rectangle([-122.7286, 37.6325, -122.0241, 37.9592]);
 Export.video.toDrive({
   collection: images,
   description: 'videoTest',
