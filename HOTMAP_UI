@@ -203,6 +203,10 @@ function get_volcanic_areas() {
   }
   return volcanoes.map(volcanoPatch)
 }
+
+var volcanic_areas = get_volcanic_areas()
+
+
 // HOTMAP detection (returns hot pixel clusters, i.e. a feature collection per image)
 HotMap.prototype.runHotMapAnalysis = function(img) {
 
@@ -254,12 +258,12 @@ HotMap.prototype.runHotMapAnalysis = function(img) {
     return cluster
   })
 
-  var volcanic_areas = get_volcanic_areas()
+  
 
   var classified = clusters.map(function (feature) {
     
     var hot = feature.geometry()
-    var volcanic = hot.containedIn(volcanic_areas,10)
+    var volcanic = hot.containedIn(volcanic_areas,500)
     var hot_type = ee.Algorithms.If(volcanic,'volcanic','fire')
     
     return ee.Feature(hot,{'hot_type':hot_type}).copyProperties(feature)
