@@ -151,7 +151,10 @@ HotMap.prototype.hotnessAnalysis = function(){
   //TODO: check if selected
   if(this.chkbx_hotmap.getValue()){
     this.renameLayer("hot_vectors", "hot_vectors2");
-    Map.addLayer(hot,{color:'FF0000'},'hot_vectors');
+    var volcanoes = hot.filter(ee.Filter.eq('hot_type','volcanic'));
+    var fires = hot.filter(ee.Filter.eq('hot_type','fire'))
+    Map.addLayer(volcanoes,{color:'purple'},'hot_vectors');
+    Map.addLayer(fires,{color:'FF0000'},'hot_vectors');
   }else{
     this.removeLayer('hot_vectors');
   }
@@ -189,6 +192,17 @@ HotMap.prototype.setupSidePannel = function(){
 /**
   Fancy pants function to do the actual SCIENCE!!!
 */
+
+function get_volcanic_areas() {
+  var volcanoes = ee.FeatureCollection('ft:1By_TxmjpCjLippFR1REdyA7ULGEAoQPw-EjubYAk')
+  function volcanoPatch(feature) {
+    var lat = ee.Number(feature.get('latitude'))
+    var lon = ee.Number(feature.get('longitude'))
+    var geom = ee.Geometry.Point(lon,lat).buffer(50000)
+    return ee.Feature(geom,{}).copyProperties(feature)
+  }
+  return volcanoes.map(volcanoPatch)
+}
 // HOTMAP detection (returns hot pixel clusters, i.e. a feature collection per image)
 HotMap.prototype.runHotMapAnalysis = function(img) {
 
@@ -240,7 +254,18 @@ HotMap.prototype.runHotMapAnalysis = function(img) {
     return cluster
   })
 
-  return clusters
+  var volcanic_areas = get_volcanic_areas()
+
+  var classified = clusters.map(function (feature) {
+    
+    var hot = feature.geometry()
+    var volcanic = hot.containedIn(volcanic_areas)
+    var hot_type = ee.Algorithms.If(volcanic,'volcanic','fire')
+    
+    return ee.Feature(hot,{'hot_type':hot_type}).copyProperties(feature)
+  });
+
+  return classified;
 }
 
 /**
