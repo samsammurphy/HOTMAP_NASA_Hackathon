@@ -78,8 +78,8 @@ Map.addLayer(hot,{color:'red'},'hot_vectors')
 // Burn Scars
 //
 //var NBR = img.normalizedDifference(['nir','swir2'])
-  // Map.addLayer(hsv,{},'hsv')
-  // Map.addLayer(NBR,{},'NBR')
+// Map.addLayer(hsv,{},'hsv')
+// Map.addLayer(NBR,{},'NBR')
 // _________________________________________________
 
 function find_burn_scars(img) {
