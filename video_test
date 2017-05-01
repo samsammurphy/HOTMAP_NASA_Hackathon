@@ -5,6 +5,8 @@ var africa = /* color: #00d6cc */ee.Geometry.Polygon(
           [53.44, -35.46],
           [53.44, 37.72]]]);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
+var us = ee.Geometry.Rectangle(-128.67, 49.72, -74.71, 24.53)
+
 
 var imgArr = [];
 var year = 2001;
@@ -43,10 +45,10 @@ Export.video.toDrive({
   description: 'videoTest',
   dimensions: 720,
   framesPerSecond: 12,
-  region: africa
+  region: us
 });
-Map.addLayer(africa)
-Map.centerObject(africa)
+//Map.addLayer(africa)
+//Map.centerObject(africa)
 
 //var geom = ee.Geometry.Rectangle(-121.8645, 36.4069, -121.6035, 36.5262)
 //var start = ee.Date('2016-01-01')
