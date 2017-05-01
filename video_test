@@ -1,17 +1,65 @@
-var geom = ee.Geometry.Rectangle(-121.8645, 36.4069, -121.6035, 36.5262)
-var start = ee.Date('2016-01-01')
-var finish = ee.Date('2016-10-01')
+var im = ee.ImageCollection('LANDSAT/LC8_L1T_TOA').first()
+var image = ee.Image('LANDSAT/LC8_L1T/LC80440342014077LGN00');
+Map.addLayer(image)
 
-var images = ee.ImageCollection('LANDSAT/LC8_L1T_TOA')
-  .filterBounds(geom).filterDate(start, finish)
-  .select(['B4', 'B3', 'B2'])
-  .map(function(image) {
-    return image.visualize()
-  .clip(geom)
-  })
 
+
+var imgArr = [];
+var year = 2001;
+while (year < 2017) {
+  var month = 1;
+  while (month < 13) {
+    var start = ee.Date(year + '-' + month + '-01');
+    month++;
+    var end;
+    if(month == 13) {
+      var y = year + 1;
+      month--;
+      end = ee.Date(y + '-' + month + '-01');
+      break;
+    } else {
+      end = ee.Date(year + '-' + month + '-01');
+    }
+    var FIRMS = ee.ImageCollection('FIRMS')
+      .filterDate(start, end)
+    var sum = FIRMS.reduce(ee.Reducer.sum())
+    var binary = sum.divide(sum).select('T21_sum')
+      .rename('binary')
+      .visualize({palette: ['FF0000']})
+    
+    imgArr.push(binary)
+  }
+  month = 1
+  year++
+}
+var images = ee.ImageCollection(imgArr)
 print(images)
-Map.addLayer(geom)
-Map.centerObject(geom)
+Map.addLayer(images)
 
-Export.video.toDrive(images)
+Export.video.toDrive({
+  collection: images,
+  description: 'videoTest',
+  dimensions: 720,
+  framesPerSecond: 12,
+  region: africa
+});
+Map.addLayer(africa)
+Map.centerObject(africa)
+
+//var geom = ee.Geometry.Rectangle(-121.8645, 36.4069, -121.6035, 36.5262)
+//var start = ee.Date('2016-01-01')
+//var finish = ee.Date('2016-10-01')
+//
+//var images = ee.ImageCollection('LANDSAT/LC8_L1T_TOA')
+//  .filterBounds(geom).filterDate(start, finish)
+//  .select(['B4', 'B3', 'B2'])
+//  .map(function(image) {
+//    return image.visualize()
+//  .clip(geom)
+//  })
+
+//print(images)
+//Map.addLayer(geom)
+//Map.centerObject(geom)
+
+//Export.video.toDrive(images)
