@@ -1,5 +1,5 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var polygon = /* color: #d63000 */ee.Geometry.Polygon(
+var africa = /* color: #00d6cc */ee.Geometry.Polygon(
         [[[-19.69, 37.72],
           [-19.69, -35.46],
           [53.44, -35.46],
@@ -41,7 +41,7 @@ Export.video.toDrive({
   description: 'videoTest',
   dimensions: 720,
   framesPerSecond: 12,
-  region: polygon
+  region: africa
 });
-Map.addLayer(polygon)
-Map.centerObject(polygon)
+Map.addLayer(africa)
+Map.centerObject(africa)
