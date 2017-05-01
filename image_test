@@ -17,3 +17,4 @@ var images = ee.ImageCollection('LANDSAT/LC8_L1T_TOA')
 })
 
 Map.addLayer(images)
+Map.centerObject(images)
