@@ -239,6 +239,7 @@ HotMap.prototype.runHotMapAnalysis = function(img) {
 
   // hot pixel clusters must contain alpha pixels
   var validHotClusters = hotClusters.filter(ee.Filter.gt('count', 0));
+  var clusters = validHotClusters
 
   // Image properties
   var fileID = img.get('system:index')
@@ -246,17 +247,17 @@ HotMap.prototype.runHotMapAnalysis = function(img) {
   var timestamp = img.get('system:time_start')
 
   // Assign properties
-  var clusters = validHotClusters.map(function(feature) {
-    var clusterGeom = feature.geometry()
-    var clusterArea = feature.geometry().area(1) // i.e. to within 1 m2
-    var cluster = ee.Feature(clusterGeom,{
-      fileID:fileID,
-      satID:satID,
-      timestamp:timestamp,
-      area:clusterArea
-    })
-    return cluster
-  })
+  // var clusters = validHotClusters.map(function(feature) {
+  //   var clusterGeom = feature.geometry()
+  //   var clusterArea = feature.geometry().area(1) // i.e. to within 1 m2
+  //   var cluster = ee.Feature(clusterGeom,{
+  //     fileID:fileID,
+  //     satID:satID,
+  //     timestamp:timestamp,
+  //     area:clusterArea
+  //   })
+  //   return cluster
+  // })
 
   
 
