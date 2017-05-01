@@ -6,7 +6,7 @@ var africa = /* color: #00d6cc */ee.Geometry.Polygon(
           [53.44, 37.72]]]);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 var start = ee.Date('2016-01-01')
-var finish = ee.Date('2016-10-01')
+var end = ee.Date('2016-10-01')
 
 var images = ee.ImageCollection('LANDSAT/LC8_L1T_TOA')
  .filterBounds(africa).filterDate(start, end)
