@@ -270,7 +270,7 @@ HotMap.prototype.runHotMapAnalysis = function(img) {
     return ee.Feature(hot,{'hot_type':hot_type}).copyProperties(feature)
   });
 
-  return classified;
+  return clusters;
 }
 
 /**
