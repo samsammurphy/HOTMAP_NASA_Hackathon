@@ -1,3 +1,11 @@
 var image = ee.Image('LANDSAT/LC8_L1T/LC80440342014077LGN00');
 Map.centerObject(image)
 Map.addLayer(image)
+
+var images = ee.ImageCollection('LANDSAT/LC8_L1T_TOA')
+ .filterBounds(geom).filterDate(start, finish)
+ .select(['B4', 'B3', 'B2'])
+ .map(function(image) {
+ return image.visualize()
+.clip(geom)
+})
