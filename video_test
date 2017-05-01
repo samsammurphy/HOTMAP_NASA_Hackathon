@@ -5,7 +5,7 @@ var africa = /* color: #00d6cc */ee.Geometry.Polygon(
           [53.44, -35.46],
           [53.44, 37.72]]]);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
-var us = ee.Geometry.Rectangle(-128.67, 49.72, -67.15, 24.00)
+var us = ee.Geometry.Rectangle(-128.67, 49.72, -67.15, 23.00)
 
 
 var imgArr = [];
