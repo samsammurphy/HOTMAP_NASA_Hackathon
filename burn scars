@@ -76,27 +76,28 @@ Map.addLayer(hot,{color:'red'},'hot_vectors')
 
 
 // Burn Scars
+//
+//var NBR = img.normalizedDifference(['nir','swir2'])
+  // Map.addLayer(hsv,{},'hsv')
+  // Map.addLayer(NBR,{},'NBR')
 // _________________________________________________
 
-var NBR = img.normalizedDifference(['nir','swir2'])
-var hsv = ir.rgbToHsv()
-Map.addLayer(hsv,{},'hsv')
-Map.addLayer(NBR,{},'NBR')
+function find_burn_scars(img) {
+  
+  var hsv = ir.rgbToHsv()
+  var notGrey = hsv.select(['saturation']).gt(0.2)
+  var hue = hsv.select(['hue']).lt(0.2)
+  var dull = hsv.select('value').lt(0.35)
+  var lowNir = img.select(['nir']).lt(0.25)
+  
+  var burnt = notGrey.and(hue).and(dull).and(lowNir)
+  var burnt_masked = burnt.updateMask(burnt)
+  
+  return burnt_masked
+  
+}
 
-var notGrey = hsv.select(['saturation']).gt(0.2)
-var hue = hsv.select(['hue']).lt(0.2)
-var dull = hsv.select('value').lt(0.35)
-var lowNir = img.select(['nir']).lt(0.25)
-
-
-// Map.addLayer(colorful,{},'high saturation')
-// Map.addLayer(hue,{},'low hue')
-// Map.addLayer(NBR,{},'NBR')
-
-
-var burnt = notGrey.and(hue).and(dull).and(lowNir)
-var burnt = burnt.updateMask(burnt)
-
+var burnt = find_burn_scars(img)
 Map.addLayer(burnt,{},'burnt')
 
 
