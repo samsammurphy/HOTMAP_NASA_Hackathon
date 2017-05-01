@@ -151,10 +151,11 @@ HotMap.prototype.hotnessAnalysis = function(){
   //TODO: check if selected
   if(this.chkbx_hotmap.getValue()){
     this.renameLayer("hot_vectors", "hot_vectors2");
-    var volcanoes = hot.filter(ee.Filter.eq('hot_type','volcanic'));
-    var fires = hot.filter(ee.Filter.eq('hot_type','fire'))
-    Map.addLayer(volcanoes,{color:'purple'},'hot_vectors');
-    Map.addLayer(fires,{color:'FF0000'},'hot_vectors');
+    // var volcanoes = hot.filter(ee.Filter.eq('hot_type','volcanic'));
+    // var fires = hot.filter(ee.Filter.eq('hot_type','fire'))
+    Map.addLayer(hot, {color:'FF0000'},'hot_vectors');
+    // Map.addLayer(volcanoes,{color:'purple'},'hot_vectors');
+    // Map.addLayer(fires,{color:'FF0000'},'hot_vectors');
   }else{
     this.removeLayer('hot_vectors');
   }
