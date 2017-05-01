@@ -71,7 +71,7 @@ var hot = HOTMAP(img)
 Map.addLayer(ir,{min:0,max:0.4},'infrared')
 Map.addLayer(rgb,{min:0,max:0.4},'visible')
 Map.addLayer(hot,{color:'red'},'hot_vectors')
-// Map.centerObject(Monterey_geom,10)
+Map.centerObject(Monterey_geom,10)
 
 
 
@@ -98,7 +98,16 @@ function find_burn_scars(img) {
 }
 
 var burnt = find_burn_scars(img)
-Map.addLayer(burnt,{},'burnt')
+
+
+var R = burnt.divide(1000)
+var G = burnt
+var B = burnt.divide(1000)
+
+var burntRGB = R.addBands(G).addBands(B)
+
+
+Map.addLayer(burntRGB,{},'burnt')
 
 
 
