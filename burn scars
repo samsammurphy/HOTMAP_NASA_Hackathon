@@ -85,6 +85,7 @@ Map.addLayer(NBR,{},'NBR')
 
 var colorful = hsv.select(['saturation']).gt(0.4)
 var hue = hsv.select(['hue']).lt(0.2)
+var dull = hsv.select('value').lt(0.3)
 
 
 // Map.addLayer(colorful,{},'high saturation')
@@ -92,7 +93,7 @@ var hue = hsv.select(['hue']).lt(0.2)
 // Map.addLayer(NBR,{},'NBR')
 
 
-var burnt = colorful.and(hue)
+var burnt = colorful.and(hue).and(dull)
 var burnt = burnt.updateMask(burnt)
 
 Map.addLayer(burnt,{},'burnt')
