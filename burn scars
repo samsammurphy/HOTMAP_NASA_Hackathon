@@ -63,23 +63,39 @@ function HOTMAP(img) {
 }
 
 
+// Display Fires
 var img = ee.Image(ic.first())
-Map.addLayer(img.select(['swir2','swir1','nir']),{min:0,max:0.4},'infrared')
-Map.addLayer(img.select(['red','green','blue']),{min:0,max:0.4},'visible')
-
+var rgb = img.select(['red','green','blue'])
+var ir = img.select(['swir2','swir1','nir'])
 var hot = HOTMAP(img)
+Map.addLayer(ir,{min:0,max:0.4},'infrared')
+Map.addLayer(rgb,{min:0,max:0.4},'visible')
 Map.addLayer(hot,{color:'red'},'hot_vectors')
+// Map.centerObject(Monterey_geom,10)
 
-Map.centerObject(Monterey_geom,10)
 
-// Normalized Burn Ratio
+
+// Burn Scars
+// _________________________________________________
+
 var NBR = img.normalizedDifference(['nir','swir2'])
-
+var hsv = ir.rgbToHsv()
+Map.addLayer(hsv,{},'hsv')
 Map.addLayer(NBR,{},'NBR')
 
+var colorful = hsv.select(['saturation']).gt(0.4)
+var hue = hsv.select(['hue']).lt(0.2)
 
 
+// Map.addLayer(colorful,{},'high saturation')
+// Map.addLayer(hue,{},'low hue')
+// Map.addLayer(NBR,{},'NBR')
 
+
+var burnt = colorful.and(hue)
+var burnt = burnt.updateMask(burnt)
+
+Map.addLayer(burnt,{},'burnt')
 
 
 
