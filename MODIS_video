@@ -1,14 +1,3 @@
-//var s = ee.Date('2000-01-01')
-//var f = ee.Date('2002-10-01')
-//var FIRMS = ee.ImageCollection('FIRMS')
-//  .filterDate(s,f)
-//var img = ee.Image((FIRMS.first()))
-//var sum = FIRMS.reduce(ee.Reducer.sum())
-//var binary = sum.divide(sum).select('T21_sum').rename('binary')
-//print(binary)
-//Map.addLayer(binary,{color:'FF0000'})
-//Map.centerObject(binary)
-
 var imgArr = [];
 var year = 2001;
 while (year < 2017) {
@@ -52,43 +41,3 @@ Export.video.toDrive({
 });
 Map.addLayer(polygon)
 Map.centerObject(polygon)
-
-
-// var images = ee.ImageCollection(imageCollection)
-//   .filterDate(start, finish)
-//   //.select(['NDVI', 'EVI', 'DetailedQA'])
-//   .map(function(image) {
-//     return image.visualize()
-//   //.clip(geom)
-//   })
-// print(images)
-// Map.addLayer(images)
-
-// var collection = ee.ImageCollection('LANDSAT/LT5_L1T_TOA')
-//   .filter(ee.Filter.eq('WRS_PATH', 44))
-//   .filter(ee.Filter.eq('WRS_ROW', 34))
-//   // Filter cloudy scenes.
-//   .filter(ee.Filter.lt('CLOUD_COVER', 30))
-//   // Get 20 years of imagery.
-//   .filterDate('1991-01-01','2011-12-30')
-//   // Need to have 3-band imagery for the video.
-//   .select(['B4', 'B3', 'B2'])
-//   // Need to make the data 8-bit.
-//   .map(function(image) {
-//     return image.multiply(512).uint8();
-//   });
-
-// Define an area to export.
-// var polygon = ee.Geometry.Rectangle([-122.7286, 37.6325, -122.0241, 37.9592]);
-
-//Map.addLayer(polygon)
-//Map.centerObject(polygon)
-
-// Export (change dimensions or scale for higher quality).
-//Export.video.toDrive({
-//  collection: collection,
-//  description: 'videoTest',
-//  dimensions: 720,
-//  framesPerSecond: 12,
-//  region: polygon
-//});
