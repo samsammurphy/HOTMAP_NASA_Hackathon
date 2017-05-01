@@ -259,7 +259,7 @@ HotMap.prototype.runHotMapAnalysis = function(img) {
   var classified = clusters.map(function (feature) {
     
     var hot = feature.geometry()
-    var volcanic = hot.containedIn(volcanic_areas)
+    var volcanic = hot.containedIn(volcanic_areas,10)
     var hot_type = ee.Algorithms.If(volcanic,'volcanic','fire')
     
     return ee.Feature(hot,{'hot_type':hot_type}).copyProperties(feature)
