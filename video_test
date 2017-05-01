@@ -44,7 +44,7 @@ Export.video.toDrive({
   collection: images,
   description: 'videoTest',
   dimensions: 720,
-  framesPerSecond: 12,
+  framesPerSecond: 5,
   region: us
 });
 //Map.addLayer(africa)
