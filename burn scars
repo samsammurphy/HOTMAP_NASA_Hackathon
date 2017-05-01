@@ -86,7 +86,7 @@ Map.addLayer(NBR,{},'NBR')
 var notGrey = hsv.select(['saturation']).gt(0.2)
 var hue = hsv.select(['hue']).lt(0.2)
 var dull = hsv.select('value').lt(0.35)
-var lowNir = nir.lt(0.25)
+var lowNir = img.select(['nir']).lt(0.25)
 
 
 // Map.addLayer(colorful,{},'high saturation')
