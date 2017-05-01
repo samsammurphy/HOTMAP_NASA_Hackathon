@@ -1,11 +1,17 @@
-var image = ee.Image('LANDSAT/LC8_L1T/LC80440342014077LGN00');
-Map.centerObject(image)
-Map.addLayer(image)
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+var africa = /* color: #00d6cc */ee.Geometry.Polygon(
+        [[[-19.69, 37.72],
+          [-19.69, -35.46],
+          [53.44, -35.46],
+          [53.44, 37.72]]]);
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
 
 var images = ee.ImageCollection('LANDSAT/LC8_L1T_TOA')
- .filterBounds(geom).filterDate(start, finish)
+ .filterBounds(africa).filterDate(start, end)
  .select(['B4', 'B3', 'B2'])
  .map(function(image) {
  return image.visualize()
 .clip(geom)
 })
+
+Map.addLayer(images)
