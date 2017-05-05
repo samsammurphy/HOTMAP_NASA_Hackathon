@@ -15,17 +15,19 @@ var volcanic_areas = get_volcanic_areas()
 // fire features
 var fire1 = ee.Geometry.Point(-116.19, 38.75)
 var fire2 = ee.Geometry.Point(-105.21, 34.96)
-var fire3 = ee.Geometry.Point(-86.84, 44.34)
+var fire3 = ee.Geometry.Point(-89.82, 43.33)
 
 // volcano (hawaii)
-var volcano = ee.Geometry.Point(-155.2286, 19.4329)
+var hawaii = ee.Geometry.Point(-155.2286, 19.4329)
+var iceland = ee.Geometry.Point(-20.39, 64.17)
 
 // fire feature collection
 var hotThings = ee.FeatureCollection([
   ee.Feature(fire1,{}),
   ee.Feature(fire2,{}),
   ee.Feature(fire3,{}),
-  ee.Feature(volcano,{})
+  ee.Feature(hawaii,{}),
+  ee.Feature(iceland,{})
   ])
 
 //Map.addLayer(hotThings,{color:'red'})
@@ -49,7 +51,8 @@ var fires = classified.filter(ee.Filter.eq('hot_type','fire'))
 print(volcanoes)
 print(fires)
 
-Map.addLayer(volcanoes,{color:'purple'})
+Map.addLayer(volcanic_areas)
+Map.addLayer(volcanoes,{color:'cyan'})
 Map.addLayer(fires,{color:'red'})
 
 
